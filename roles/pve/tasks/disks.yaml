@@ -67,3 +67,4 @@
     hour: 2
     minute: 0
     job: python3 /opt/snapraid-runner/snapraid-runner.py -c /opt/snapraid-runner/snapraid-runner.conf
+

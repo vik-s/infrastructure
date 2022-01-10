@@ -1,5 +1,5 @@
----
-version: "3.0"
+version: '3.9'
+
 services:
   scrutiny:
     image: lscr.io/linuxserver/scrutiny
@@ -19,6 +19,11 @@ services:
       - /run/udev:/run/udev:ro
     ports:
       - 8080:8080
+    profiles:
+      - all
     devices:
-      - /dev:/dev
+      - /dev/sda:/dev/sda
+      - /dev/sdb:/dev/sdb
+      - /dev/sdc:/dev/sdc
+      - /dev/sdd:/dev/sdd
     restart: unless-stopped

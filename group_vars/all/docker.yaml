@@ -4,3 +4,5 @@ docker_file_mask: 0664
 docker_dir_mask: 0775
 
 docker_update_command: docker-compose pull && docker-compose down --remove-orphans && docker-compose rm && docker-compose --profile all up -d
+
+docker_update_command_v2: docker compose pull && docker compose down --remove-orphans && docker compose rm && docker compose --profile all up -d

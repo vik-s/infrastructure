@@ -7,12 +7,19 @@
 
 - name: set up containers
   include: infra.yaml
+  when: setup_containers
 
 - name: Install and enable wireguard
   include: wireguard.yaml 
+  when: setup_wireguard
 
 - name: Setup mergerfs and snapraid
   include: mergerfs_snapraid.yaml
+  when: setup_snapraid
 
 - name: Setup disks
   include: disks.yaml
+  when: setup_disks
+
+- name: Setup docker apps on PVE host
+  include: docker.yaml
