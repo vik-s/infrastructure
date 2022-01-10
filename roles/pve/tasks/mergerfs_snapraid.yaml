@@ -1,0 +1,20 @@
+- name: Install mergerfs
+  ansible.builtin.package:
+    deb: "{{ mergerfs_installer }}" 
+
+- name: Create snapraid directory
+  ansible.builtin.file:
+    path: /opt/snapraid
+    state: directory
+    mode: 0755
+
+- name: Download and extract snapraid
+  ansible.builtin.unarchive:
+    src: "{{ snapraid_installer }}"
+    dest: /opt/snapraid
+    remote_src: yes
+    mode: 0744
+
+- name: Run configure and make script, then install snapraid
+  ansible.builtin.shell: cd /opt/snapraid/snapraid-* && ./configure && make && make install
+  become: true

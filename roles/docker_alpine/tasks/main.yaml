@@ -1,0 +1,60 @@
+# Trick to making docker work in LXC is this script
+# source: https://wildwolf.name/how-to-run-docker-in-alpine-container-in-lxc-lxd/
+# 
+# Blog on why fuse-overlayfs is better for reduced storage use
+# https://theorangeone.net/posts/docker-lxc-storage/
+
+- name: Install docker, docker-compose, fuse-overlayfs
+  ansible.builtin.package:
+    name: 
+      - docker
+      - docker-compose
+      - fuse-overlayfs
+      - wireguard-tools
+    state: present
+
+- name: Create /etc/docker if it does not exist
+  ansible.builtin.file:
+    path: /etc/docker
+    state: directory
+    mode: 0775
+
+- name: Change docker storage driver
+  ansible.builtin.copy:
+    src: files/daemon.json
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Add cgroups patch script
+  ansible.builtin.copy:
+    src: files/cgroups_patch
+    dest: /etc/init.d/cgroups_patch
+    mode: 0755
+    owner: root
+    group: root
+
+- name: Run the cgroups patch script
+  ansible.builtin.shell:
+    cmd: sh /etc/init.d/cgroups_patch
+
+- name: Enable cgroups patch at boot
+  ansible.builtin.shell:
+    cmd: rc-update add cgroups_patch boot
+
+- name: Enable docker at boot
+  ansible.builtin.shell:
+    cmd: rc-update add docker boot
+
+- name: Add main user to docker group
+  ansible.builtin.user:
+    name: "{{ secret_username }}"
+    groups:
+      - docker
+    append: yes
+
+- name: Restart docker
+  ansible.builtin.service:
+    name: docker
+    state: restarted

@@ -1,0 +1,8 @@
+- name: Packages
+  include: packages.yaml
+
+- name: User
+  include: users.yaml
+
+- name: SSH
+  include: ssh.yaml

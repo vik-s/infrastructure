@@ -1,0 +1,31 @@
+- name: Add SSH Keys
+  authorized_key:
+    user: "{{ item.user }}"
+    state: present
+    key: "{{ item.key }}"
+  become: true
+  loop:
+    - {user: "{{ secret_username }}", key: "{{ secret_mainuser_sshkey }}"}
+    - {user: "{{ secret_username }}", key: "{{ secret_mainuser_alt_sshkey }}"}
+    - {user: ansible, key: "{{ secret_ansible_sshkey }}"}
+
+- name: Add Hardened SSH Config
+  copy:
+    src: sshd_config
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: 600
+  register: sshd_config
+  become: true
+
+- name: Enable SSH
+  service:
+    name: sshd
+    enabled: true
+  become: true
+- name: Restart SSH Daemon
+  service:
+    name: sshd
+    state: reloaded
+  when: sshd_config.changed

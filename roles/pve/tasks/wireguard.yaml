@@ -1,0 +1,18 @@
+- name: Install wireguard package
+  ansible.builtin.package:
+    name: "{{ item }}"
+  become: true
+  loop:
+    - pve-headers
+    - wireguard
+
+- name: Enable wireguard kernel module
+  ansible.builtin.shell:
+    cmd: modprobe wireguard
+  become: true
+
+- name: Make sure wireguard is loaded on boot
+  ansible.builtin.lineinfile:
+    path: /etc/modules-load.d/modules.conf
+    line: 'wireguard'
+    state: present

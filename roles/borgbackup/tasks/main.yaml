@@ -1,0 +1,76 @@
+---
+
+# Setup borg w/ borgmatic for backup
+# ----------------------------------
+
+- name: Install dependancies for borg
+  ansible.builtin.apt:
+    name:
+      - python3
+      - python3-dev
+      - python3-pip
+      - libssl-dev
+      - openssl
+      - libacl1-dev
+      - libacl1
+      - build-essential
+      - libfuse-dev
+      - fuse
+      - pkg-config
+
+- name: Install virtualenv
+  ansible.builtin.pip:
+    name: virtualenv
+
+- name: Install borg and borgmatic
+  ansible.builtin.pip:
+    name: 
+      - borgbackup[fuse]
+      - borgmatic
+    virtualenv: "{{ app_env }}"
+
+- name: Add Borg to PATH
+  copy:
+    dest: /etc/profile.d/borg-path.sh
+    content: "PATH=$PATH:{{ app_env }}/bin"
+ 
+- name: Create folder to place config file
+  ansible.builtin.file:
+    path: /etc/borgmatic
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  
+- name: Install borgmatic config file
+  ansible.builtin.template:
+    src: files/config.yaml
+    dest: /etc/borgmatic/config.yaml
+    mode: 0755
+    owner: root
+    group: root
+
+- name: Copy borg private key
+  ansible.builtin.copy:
+    src: files/borg_privkey
+    dest: /root/.ssh/borg_privkey
+    mode: 0600
+
+- name: Validate config
+  ansible.builtin.shell:
+    cmd: source /etc/profile.d/borg-path.sh && validate-borgmatic-config
+    executable: /bin/bash
+  register: borg_validation
+  
+- name: Init borgmatic repo if it does not exist
+  ansible.builtin.shell:
+    cmd: source /etc/profile.d/borg-path.sh && borgmatic init --encryption repokey
+    executable: /bin/bash
+
+# TODO: add restore backup
+
+- name: Add cronjob
+  ansible.builtin.template:
+    src: files/cron
+    dest: /etc/cron.d/borgmatic
+    mode: 0755

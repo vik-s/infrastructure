@@ -1,0 +1,69 @@
+- name: Make sure disks are unmounted
+  ansible.builtin.mount:
+    path: "{{ item.path }}"
+    state: unmounted
+  with_items:
+    - "{{ parity_disks }}"
+    - "{{ data_disks }}"
+
+- name: Create mount points
+  ansible.builtin.file:
+    dest: "{{ item.path }}"
+    state: directory
+    owner: "{{ secret_username }}"
+    group: "{{ secret_username }}"
+    mode: 0775
+  with_items:
+    - "{{ mergerfs_mount }}"
+    - "{{ parity_disks }}"
+    - "{{ data_disks }}"
+
+- name: Mount disks
+  mount:
+    path: "{{ item.path }}"
+    src: "{{ item.devid }}"
+    fstype: "{{ item.fs }}"
+    opts: "{{ item.opts }}"
+    state: mounted
+  with_items:
+    - "{{ parity_disks }}"
+    - "{{ data_disks }}"
+
+- name: Mount mergerfs array
+  mount:
+    path: "{{ item.path}}"
+    src: "{{ item.source }}"
+    opts: "{{ item.opts }}"
+    fstype: "{{ item.fs }}"
+    state: mounted
+  with_items:
+    - "{{ mergerfs_fstab }}"
+
+- name: Install snapraid template
+  ansible.builtin.template:
+    src: templates/snapraid.j2
+    dest: /etc/snapraid.conf
+    owner: root
+    group: root
+    mode: 0775
+
+- name: Install snapraid-runner
+  ansible.builtin.git:
+    repo: "{{ snapraid_runner_git }}"
+    dest: /opt/snapraid-runner
+
+- name: Copy snapraid-runner configuration
+  ansible.builtin.copy:
+    src: files/snapraid-runner.conf
+    dest: /opt/snapraid-runner
+    owner: root
+    group: root
+    mode: 0775
+
+- name: Setup cronjob for snapraid-runner
+  ansible.builtin.cron:
+    name: snapraid-runner
+    weekday: 6
+    hour: 2
+    minute: 0
+    job: python3 /opt/snapraid-runner/snapraid-runner.py -c /opt/snapraid-runner/snapraid-runner.conf

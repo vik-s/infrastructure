@@ -1,0 +1,33 @@
+- name: Run apt update
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install fuse-overlayfs for reduced storage use
+  ansible.builtin.apt:
+    name:
+      - libfuse3-dev
+      - fuse-overlayfs
+
+- name: Stop Docker
+  ansible.builtin.service:
+    name: docker
+    state: stopped
+
+#- name: Backup /var/lib/docker
+#  ansible.builtin.copy:
+#    src: /var/lib/docker
+#    dest: /var/lib/docker.bk
+#    remote_src: yes
+
+- name: Change docker storage driver
+  ansible.builtin.copy:
+    src: files/daemon.json
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Start Docker
+  ansible.builtin.service:
+    name: docker
+    state: started

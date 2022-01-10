@@ -1,0 +1,19 @@
+# Basic docker install handled by geerlingguy.docker
+# Here, we switch to fuse-overlayfs and perform setup
+
+- name: Setup fuse-overlayfs
+  include: fuseoverlayfs.yaml
+
+- name: Add main user to docker group
+  ansible.builtin.user:
+    name: "{{ secret_username }}"
+    groups: docker
+    append: yes
+
+- name: Create appdata folder
+  ansible.builtin.file:
+    path: /opt/appdata
+    state: directory
+    owner: "{{ secret_username }}"
+    group: "{{ secret_username }}"
+    mode: '0644'

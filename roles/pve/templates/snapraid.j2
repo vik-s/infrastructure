@@ -1,0 +1,29 @@
+# SnapRAID configuration file
+
+# Parity location(s)
+
+{% for par in parity_disks -%}
+    {{ loop.index }}-parity {{ par.path }}/snapraid.parity
+{% endfor %}
+
+# Content file location(s)
+
+content /var/snapraid.content
+
+{% for data in data_disks -%}
+    content {{ data.path }}/.snapraid.content
+{% endfor %}
+
+# Data disk(s)
+
+{% for data in data_disks -%}
+    data d{{ loop.index }} {{ data.path }}
+{% endfor %}
+
+# Excludes hidden files and directories
+exclude *.unrecoverable
+exclude /tmp/
+exclude /lost+found/
+exclude downloads/
+exclude appdata/
+exclude *.!sync

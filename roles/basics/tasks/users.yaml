@@ -1,0 +1,28 @@
+- name: Add Users
+  ansible.builtin.user:
+    name: "{{ item.user }}"
+    password: "{{ item.pass | password_hash('sha512', secret_hash_salt) }}"
+    home: "/home/{{ item.user }}"
+    uid: "{{ item.uid }}"
+    groups:
+      - "{{ item.user }}"
+    shell: /bin/sh
+  loop:
+    - {user: "{{ secret_username }}", pass: "{{ secret_mainuser_pass }}", uid: "{{ secret_useruid }}"}
+    - {user: ansible, pass: "{{ secret_ansible_pass }}", uid: "{{ secret_ansibleuid }}"}
+  become: true
+
+- name: Give user sudo access
+  lineinfile:
+    path: /etc/sudoers
+    line: "{{ secret_username }} ALL=(ALL) ALL"
+  become: true
+
+- name: Give 'ansible' user passwordless sudo access
+  copy:
+    src: sudoer_ansible
+    dest: /etc/sudoers.d/ansible
+    owner: root
+    group: root
+    mode: 0440
+  become: true

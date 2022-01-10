@@ -1,0 +1,149 @@
+version: '3.3'
+
+services:
+  wg-easy: 
+    environment:
+      # Required:
+      # Change this to your host's public address
+      - WG_HOST=wg.iyer.app
+      # Optional:
+      - PASSWORD={{ secret_ansible_pass }}
+      # - WG_PORT=51820
+      # - WG_DEFAULT_ADDRESS=10.8.0.x
+      # - WG_DEFAULT_DNS=1.1.1.1
+      - WG_ALLOWED_IPS=192.168.1.0/24
+      
+    image: weejewel/wg-easy
+    container_name: wg-easy
+    volumes:
+      - ./wg-easy:/etc/wireguard
+    ports:
+      - "51820:51820/udp"
+      - "51821:51821/tcp"
+    profiles:
+      - all
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv4.conf.all.src_valid_mark=1
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.wireguard.rule=Host(`wg.homelab.lan`)
+      - traefik.http.routers.wireguard.entrypoints=web
+
+  traefik:
+    image: "traefik:v2.5"
+    container_name: "traefik"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    profiles:
+      - all
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik-v2/traefik-v2:/etc/traefik"
+
+  librespeed:
+    image: lscr.io/linuxserver/librespeed:latest
+    container_name: librespeed 
+    environment:
+      - PUID={{ docker_userid }}
+      - PGID={{ docker_userid }}
+      - TZ={{ TZ }}
+    volumes:
+      - ./librespeed/config:/config
+    ports:
+      - 9901:80
+    profiles:
+      - all
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.librespeed.rule=Host(`speed.homelab.lan`)
+      - traefik.http.routers.librespeed.entrypoints=web
+
+  sabnzbd:
+    image: ghcr.io/linuxserver/sabnzbd
+    container_name: sabnzbd
+    environment:
+      - PUID={{ docker_userid }}
+      - PGID={{ docker_userid }}
+      - TZ={{ TZ }}
+    volumes:
+      - ./sabnzbd:/config
+      - /mnt/storage/media/usenet:/media/usenet:rw
+    ports:
+      - 9101:8080
+      - 9100:9090
+    profiles:
+      - all
+      - media
+    restart: unless-stopped
+
+  radarr:
+    image: ghcr.io/linuxserver/radarr
+    container_name: radarr
+    environment:
+      - PUID={{ docker_userid }}
+      - PGID={{ docker_userid }}
+      - TZ={{ TZ }}
+    volumes:
+      - ./radarr:/config
+      - /mnt/storage/media:/media
+    ports:
+      - 9102:7878
+    profiles:
+      - all
+      - media
+    restart: unless-stopped
+
+  sonarr:
+    image: ghcr.io/linuxserver/sonarr
+    container_name: sonarr
+    environment:
+      - PUID={{ docker_userid }}
+      - PGID={{ docker_userid }}
+      - TZ={{ TZ }}
+    volumes:
+      - ./sonarr:/config
+      - /mnt/storage/media:/media
+    ports:
+      - 9103:8989
+    profiles:
+      - all
+      - media
+    restart: unless-stopped 
+
+  overseerr:
+    image: sctx/overseerr:latest
+    container_name: overseerr
+    environment:
+      - LOG_LEVEL=info
+      - TZ={{ TZ }}
+    ports:
+      - 9104:5055
+    volumes:
+      - ./overseerr:/app/config
+    profiles:
+      - all
+      - media
+    restart: unless-stopped
+
+  prowlarr:
+    image: ghcr.io/linuxserver/prowlarr:develop
+    container_name: prowlarr
+    environment:
+      - PUID={{ docker_userid }}
+      - PGID={{ docker_userid }}
+      - TZ={{ TZ }}
+    volumes:
+      - ./prowlarr:/config
+    ports:
+      - 9106:9696
+    profiles:
+      - all
+      - media
+    restart: unless-stopped 

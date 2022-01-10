@@ -1,0 +1,19 @@
+- name: Install basic packages
+  ansible.builtin.package:
+    name: "{{ item }}"
+  become: true
+  loop:
+    - htop
+    - sudo
+    - vim
+    - git
+    - tmux
+    - zsh
+
+- name: Install alpine specific packages
+  ansible.builtin.package:
+    name: "{{ item }}"
+  become: true
+  loop:
+    - ncurses
+  when: ansible_os_family == 'Alpine'

@@ -1,0 +1,5 @@
+app_env: /opt/venvs/borg-env
+
+# remote borg server 1
+remote1_server: ssh://borg@nublab.ca/mnt/extdrive/{{ ansible_facts['nodename'] }}
+remote1_repo_port: 39486

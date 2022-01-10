@@ -1,0 +1,1 @@
+0 1 * * * root source /etc/profile.d/borg-path.sh && {{ app_env }}/borgmatic --verbosity -1 --syslog-verbosity 1

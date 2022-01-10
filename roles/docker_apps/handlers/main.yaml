@@ -1,0 +1,4 @@
+- name: restart docker
+  shell:
+    chdir: /opt/docker
+    cmd: "{{ docker_update_command }}"

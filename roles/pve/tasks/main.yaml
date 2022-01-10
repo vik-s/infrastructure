@@ -1,0 +1,18 @@
+---
+
+- name: install proxmoxer
+  pip:
+    name: proxmoxer
+    state: present
+
+- name: set up containers
+  include: infra.yaml
+
+- name: Install and enable wireguard
+  include: wireguard.yaml 
+
+- name: Setup mergerfs and snapraid
+  include: mergerfs_snapraid.yaml
+
+- name: Setup disks
+  include: disks.yaml

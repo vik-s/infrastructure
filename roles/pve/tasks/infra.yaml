@@ -1,0 +1,99 @@
+---
+
+# Create zfs dataset for docker appdata
+- name: Create zfs dataset for docker persistent data
+  community.general.zfs:
+    name: rpool/docker
+    state: present
+
+# Create LXCs
+
+# update the container database in PVE
+
+- name: update pveam
+  command: pveam update
+
+# download necessary templates
+
+- name: download container templates
+  command: pveam download local {{ item }}
+  with_items:
+    - alpine-3.14-default_20210623_amd64.tar.xz
+
+# create kakashi (docker host)
+
+- name: Create LXCs w/ mounts
+  proxmox:
+    proxmox_default_behavior: no_defaults
+    vmid: "{{ item.id }}"
+    hostname: "{{ item.name }}"
+    unprivileged: "{{ item.unprivileged }}"
+    onboot: true
+    state: present
+    node: gaara 
+    storage: local-zfs
+    disk: "{{ item.disk }}"
+    cpus: '1'
+    cpuunits: '1024'
+    cores: "{{ item.cores }}"
+    memory: "{{ item.memory }}"
+    swap: '512'
+    api_user: root@pam
+    api_host: localhost
+    api_password: "{{ secret_ansible_pass }}"
+    pubkey: "{{ secret_ansible_sshkey }}"
+    password: "{{ secret_ansible_pass }}"
+    ostemplate: 'local:vztmpl/alpine-3.14-default_20210623_amd64.tar.xz'
+    netif: '{"net0":"name={{ item.nwname }},gw={{ item.gw }},ip={{ item.ip }}/24,bridge=vmbr0"}'
+    mounts: '{"mp0":"/rpool/docker,mp=/opt/docker,backup=0",
+              "mp1":"/mnt/storage,mp=/mnt/storage,backup=0"}'
+    description: created with ansible
+    features:
+      - nesting=1
+      - keyctl=1
+      - fuse=1
+  with_items:
+    - "{{ lxc_mnts }}"
+
+# ------ This block is only needed for----
+# -------Alpine and Ubuntu LXCs ----------
+# TODO: Read this info from 'ostype' in the conf file
+# and run it conditionally
+
+- name: Unconfine apparmor
+  ansible.builtin.lineinfile:
+    dest: /etc/pve/lxc/{{ item.id }}.conf
+    line: "lxc.apparmor.profile: unconfined"
+    owner: root
+  with_items:
+  - "{{ lxc_mnts }}"
+
+- name: Allow containers to access devices
+  ansible.builtin.lineinfile:
+    dest: /etc/pve/lxc/{{ item.id }}.conf
+    line: "lxc.cgroup.devices.allow: a"
+    owner: root
+  with_items:
+  - "{{ lxc_mnts }}"
+
+- name: Drop capability
+  ansible.builtin.lineinfile:
+    dest: /etc/pve/lxc/{{ item.id }}.conf
+    line: "lxc.cap.drop:"
+    owner: root
+  with_items:
+  - "{{ lxc_mnts }}" 
+
+# --------------------------------------
+  
+- name: Start LXCs w/ mounts
+  proxmox:
+    proxmox_default_behavior: no_defaults
+    vmid: "{{ item.id  }}"
+    api_user: root@pam
+    api_host: localhost
+    api_password: "{{ secret_ansible_pass }}"
+    state: started
+    timeout: 90
+  with_items:
+    - "{{ lxc_mnts }}"
