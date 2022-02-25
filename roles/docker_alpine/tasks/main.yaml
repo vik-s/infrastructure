@@ -26,6 +26,7 @@
     owner: root
     group: root
     mode: 0644
+  register: change_storage_driver
 
 - name: Add cgroups patch script
   ansible.builtin.copy:
@@ -34,14 +35,17 @@
     mode: 0755
     owner: root
     group: root
+  register: cgroups_script
 
 - name: Run the cgroups patch script
   ansible.builtin.shell:
     cmd: sh /etc/init.d/cgroups_patch
+  when: cgroups_script.changed
 
 - name: Enable cgroups patch at boot
   ansible.builtin.shell:
     cmd: rc-update add cgroups_patch boot
+  when: cgroups_script.changed
 
 - name: Enable docker at boot
   ansible.builtin.shell:
@@ -58,3 +62,4 @@
   ansible.builtin.service:
     name: docker
     state: restarted
+  when: change_storage_driver.changed or cgroups_script.changed

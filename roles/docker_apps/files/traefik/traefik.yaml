@@ -1,0 +1,52 @@
+entryPoints:
+  web:
+    address: :80
+    http:
+      redirections:
+        entryPoint:
+          to: web-secure
+          scheme: https
+  web-secure:
+    address: :443
+    http:
+      tls:
+        certResolver: le
+        domains:
+          - main: iyer.app
+            sans: "*.iyer.app"
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    watch: true
+    exposedByDefault: false
+    network: traefik
+  file:
+    directory: /etc/traefik/conf
+
+api:
+  dashboard: true
+
+certificatesResolvers:
+  le:
+    acme:
+      email: "{{ letsencrypt_email }}" 
+      storage: /etc/traefik/acme.json
+        #caserver: https://acme-staging-v02.api.letsencrypt.org/directory
+      dnsChallenge:
+        provider: namecheap 
+        delayBeforeCheck: 0
+        resolvers:
+          - 1.1.1.1:53
+          - 1.0.0.1:53
+
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+
+accessLog:
+  filePath: "/var/log/traefik/access.log"
+  filters:
+    statusCodes:
+      - "400-600"

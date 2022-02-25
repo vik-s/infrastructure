@@ -46,7 +46,10 @@
     ostemplate: 'local:vztmpl/alpine-3.14-default_20210623_amd64.tar.xz'
     netif: '{"net0":"name={{ item.nwname }},gw={{ item.gw }},ip={{ item.ip }}/24,bridge=vmbr0"}'
     mounts: '{"mp0":"/rpool/docker,mp=/opt/docker,backup=0",
-              "mp1":"/mnt/storage,mp=/mnt/storage,backup=0"}'
+              "mp1":"/mnt/storage,mp=/mnt/storage,backup=0",
+              "mp2":"/mnt/tank/cloud,mp=/mnt/tank/cloud,backup=0",
+              "mp3":"/mnt/tank/dbs,mp=/mnt/tank/dbs,backup=0",
+              "mp4":"/mnt/tank/cache,mp=/mnt/tank/cache,backup=0"}'
     description: created with ansible
     features:
       - nesting=1

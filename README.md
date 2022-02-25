@@ -1,4 +1,8 @@
 # infrastructure
 Ansible Homelab Infrastructure
 
-`make bootstrap` - Set up user name, ansible user, transfer SSH keys over, and harden SSH config. If this fails, make sure you comment out the `remote_user = ansible` line and `become_ask_pass=False` lines in the ansible.cfg file. These users do not exist in the first bootstrap run, but will do so after the users and keys have been setup properly.
+- Run `make install` to install the necessary galaxy roles as specified in `requirements.yaml`. This will also install the git-precommit hook and setup vault password if it does not exist.
+
+- Run `make gaara`. This will setup the Proxmox host, spin up containers, wireguard (if needed), disk arrays and snapraid. Finally docker apps on host are installed. To control the execution of certain roles, the corresponding flags `setup_containers`, `setup_wireguard`, `setup_snapraid`, and `setup_disks` must be set accordingly.
+
+- Run `make dockermain`. This will setup the Docker LXC and install the docker-compose file. Start all services by running `docker-compose --profile all up -d`.

@@ -6,7 +6,7 @@
     uid: "{{ item.uid }}"
     groups:
       - "{{ item.user }}"
-    shell: /bin/sh
+    shell: /bin/zsh
   loop:
     - {user: "{{ secret_username }}", pass: "{{ secret_mainuser_pass }}", uid: "{{ secret_useruid }}"}
     - {user: ansible, pass: "{{ secret_ansible_pass }}", uid: "{{ secret_ansibleuid }}"}

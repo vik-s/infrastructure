@@ -1,53 +1,33 @@
 version: '3.9'
 
 services:
-  wg-easy: 
-    environment:
-      # Required:
-      # Change this to your host's public address
-      - WG_HOST=wg.iyer.app
-      # Optional:
-      - PASSWORD={{ secret_ansible_pass }}
-      # - WG_PORT=51820
-      # - WG_DEFAULT_ADDRESS=10.8.0.x
-      # - WG_DEFAULT_DNS=1.1.1.1
-      - WG_ALLOWED_IPS=192.168.1.0/24
-      
-    image: weejewel/wg-easy
-    container_name: wg-easy
-    volumes:
-      - ./wg-easy:/etc/wireguard
-    ports:
-      - "51820:51820/udp"
-      - "51821:51821/tcp"
-    profiles:
-      - all
-    restart: unless-stopped
-    cap_add:
-      - NET_ADMIN
-      - SYS_MODULE
-    sysctls:
-      - net.ipv4.ip_forward=1
-      - net.ipv4.conf.all.src_valid_mark=1
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.wireguard.rule=Host(`wg.homelab.lan`)
-      - traefik.http.routers.wireguard.entrypoints=web
-
   traefik:
-    image: "traefik:v2.5"
-    container_name: "traefik"
+    image: traefik:v2.5
+    container_name: traefik
+    environment:
+      - NAMECHEAP_API_USER={{ secret_namecheap_api_user }}
+      - NAMECHEAP_API_KEY={{ secret_namecheap_api_key }}
     ports:
-      - "80:80"
-      - "8080:8080"
+      - 80:80
+      - 443:443
     profiles:
       - all
+      - network
+    networks:
+      - traefik
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "./traefik-v2/traefik-v2:/etc/traefik"
+      - "./traefik/traefik:/etc/traefik"
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.dashboard.rule=Host(`traefik.iyer.app`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+      - traefik.http.routers.dashboard.service=api@internal
+      - traefik.http.routers.dashboard.middlewares=localip@file
+      - traefik.http.services.dashboard.loadbalancer.server.port=80"
 
   librespeed:
-    image: lscr.io/linuxserver/librespeed:latest
+    image: lscr.io/linuxserver/librespeed:5.2.5
     container_name: librespeed 
     environment:
       - PUID={{ docker_userid }}
@@ -55,18 +35,19 @@ services:
       - TZ={{ TZ }}
     volumes:
       - ./librespeed/config:/config
-    ports:
-      - 9901:80
     profiles:
       - all
+      - tools
+    networks:
+      - traefik
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.routers.librespeed.rule=Host(`speed.homelab.lan`)
-      - traefik.http.routers.librespeed.entrypoints=web
+      - traefik.http.routers.librespeed.rule=Host(`librespeed.iyer.app`)
+      - traefik.http.routers.librespeed.middlewares=localip@file
 
   sabnzbd:
-    image: ghcr.io/linuxserver/sabnzbd
+    image: ghcr.io/linuxserver/sabnzbd:3.5.0
     container_name: sabnzbd
     environment:
       - PUID={{ docker_userid }}
@@ -75,16 +56,19 @@ services:
     volumes:
       - ./sabnzbd:/config
       - /mnt/storage/media/usenet:/media/usenet:rw
-    ports:
-      - 9101:8080
-      - 9100:9090
     profiles:
       - all
       - media
+    networks:
+      - traefik
     restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.sabnzbd.rule=Host(`sabnzbd.iyer.app`)
+      - traefik.http.routers.sabnzbd.middlewares=localip@file
 
   radarr:
-    image: ghcr.io/linuxserver/radarr
+    image: ghcr.io/linuxserver/radarr:4.0.4
     container_name: radarr
     environment:
       - PUID={{ docker_userid }}
@@ -93,15 +77,19 @@ services:
     volumes:
       - ./radarr:/config
       - /mnt/storage/media:/media
-    ports:
-      - 9102:7878
     profiles:
       - all
       - media
+    networks:
+      - traefik
     restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.radarr.rule=Host(`radarr.iyer.app`)
+      - traefik.http.routers.radarr.middlewares=localip@file
 
   sonarr:
-    image: ghcr.io/linuxserver/sonarr
+    image: ghcr.io/linuxserver/sonarr:3.0.6
     container_name: sonarr
     environment:
       - PUID={{ docker_userid }}
@@ -110,30 +98,59 @@ services:
     volumes:
       - ./sonarr:/config
       - /mnt/storage/media:/media
-    ports:
-      - 9103:8989
     profiles:
       - all
       - media
+    networks:
+      - traefik
     restart: unless-stopped 
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.sonarr.rule=Host(`sonarr.iyer.app`)
+      - traefik.http.routers.sonarr.middlewares=localip@file
 
   overseerr:
-    image: sctx/overseerr:latest
+    image: sctx/overseerr:1.28.0
     container_name: overseerr
     environment:
       - LOG_LEVEL=info
       - TZ={{ TZ }}
-    ports:
-      - 9104:5055
     volumes:
       - ./overseerr:/app/config
     profiles:
       - all
       - media
+    networks:
+      - traefik
     restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.overseerr.rule=Host(`overseerr.iyer.app`)
+      - traefik.http.routers.overseerr.middlewares=localip@file
+
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:0.8.1
+    container_name: lidarr
+    environment:
+      - PUID={{ docker_userid }}
+      - PGID={{ docker_userid }}
+      - TZ={{ TZ }}
+    volumes:
+      - ./lidarr:/config
+      - /mnt/storage/media:/media
+    profiles:
+      - all
+      - media
+    networks:
+      - traefik
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.lidarr.rule=Host(`lidarr.iyer.app`)
+      - traefik.http.routers.lidarr.middlewares=localip@file
 
   prowlarr:
-    image: ghcr.io/linuxserver/prowlarr:develop
+    image: ghcr.io/linuxserver/prowlarr:0.2.0-develop
     container_name: prowlarr
     environment:
       - PUID={{ docker_userid }}
@@ -141,9 +158,205 @@ services:
       - TZ={{ TZ }}
     volumes:
       - ./prowlarr:/config
-    ports:
-      - 9106:9696
     profiles:
       - all
       - media
+    networks:
+      - traefik
     restart: unless-stopped 
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.prowlarr.rule=Host(`prowlarr.iyer.app`)
+      - traefik.http.routers.prowlarr.middlewares=localip@file
+  
+  amd:
+    image: randomninjaatk/amd 
+    container_name: amd
+    volumes:
+      - ./lidarr:/config
+      - /mnt/storage/media/usenet/music:/downloads-amd
+    environment:
+      - PUID={{ docker_userid }}
+      - PGID={{ docker_userid }}
+      - AUTOSTART=true
+      - SCRIPTINTERVAL=1h
+      - DOWNLOADMODE=wanted
+      - FALLBACKSEARCH=True
+      - LIST=both
+      - SearchType=both
+      - Concurrency=1
+      - EMBEDDED_COVER_QUALITY=80
+      - FORMAT=FLAC
+      - BITRATE=320
+      - ENABLEPOSTPROCESSING=true
+      - FORCECONVERT=false
+      - requirequality=false
+      - MatchDistance=10
+      - replaygain=true
+      - FolderPermissions=766
+      - FilePermissions=666
+      - MBRAINZMIRROR=https://musicbrainz.org
+      - MBRATELIMIT=1
+      - LidarrUrl={{ lidarr_url }}
+      - LidarrAPIkey={{ lidarr_apikey }}
+    restart: unless-stopped
+    profiles:
+      - all
+      - media
+    networks:
+      - traefik
+
+  amvd:
+    image: randomninjaatk/amvd 
+    container_name: amvd
+    volumes:
+      - ./lidarr:/config
+      - /mnt/storage/media/library/music-videos:/downloads-amvd
+    environment:
+      - PUID={{ docker_userid }}
+      - PGID={{ docker_userid }}
+      - AUTOSTART=true
+      - SCRIPTINTERVAL=1h
+      - SOURCE_CONNECTION=lidarr
+      - RequireVideoMatch=true
+      - subtitlelanguage=en
+      - videofilter=live
+      - USEFOLDERS=true
+      - USEVIDEOFOLDERS=true
+      - FilePermissions=644
+      - FolderPermissions=755
+      - MBRAINZMIRROR=https://musicbrainz.org
+      - MBRATELIMIT=1
+      - LidarrUrl={{ lidarr_url }}
+      - LidarrAPIkey={{ lidarr_apikey }}
+      - CountryCode=us
+    restart: unless-stopped
+    profiles:
+      - all
+      - media
+    networks:
+      - traefik
+
+  vaultwarden:
+    image: vaultwarden/server:1.24.0
+    container_name: vaultwarden
+    volumes:
+      - ./vw-data:/data
+    profiles:
+      - all
+      - tools
+    networks:
+      - traefik
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.bitwarden.rule=Host(`bitwarden.iyer.app`)
+      - traefik.http.routers.bitwarden.middlewares=localip@file
+
+  nextcloud:                                                           
+    image: lscr.io/linuxserver/nextcloud:version-23.0.2
+    container_name: nextcloud                                          
+    environment:                                                       
+      - PUID={{ docker_userid }}                                                      
+      - PGID={{ docker_userid }}                                       
+      - TZ={{ TZ }}                                       
+    volumes:                                                           
+      - ./nextcloud:/config                                            
+      - /mnt/tank/cloud:/data                                          
+    restart: unless-stopped                                            
+    profiles:                                                          
+      - all                                                            
+      - tools                                                          
+    depends_on:                                                        
+      - nextcloud_db                                       
+      - redis                                                          
+    networks:                                                          
+      - traefik                                                        
+      - db                                                      
+    labels:                                                            
+      - traefik.enable=true
+      - traefik.http.routers.nextcloud.rule=Host(`cloud.iyer.app`)         
+      - traefik.http.services.nextcloud-service.loadbalancer.server.scheme=https
+      - traefik.http.services.nextcloud-service.loadbalancer.server.port=443
+      - traefik.http.services.nextcloud-service.loadbalancer.serverstransport=ignorecert@file
+
+  nextcloud_db:                                                          
+    image: postgres:13.5-alpine                                        
+    container_name: nextcloud_db 
+    environment:                                                       
+      - POSTGRES_USER={{ nc_dbuser }}
+      - POSTGRES_PASSWORD={{ nc_dbpass }}
+      - POSTGRES_DB={{ nc_dbname }}                              
+    profiles:                                                          
+      - all                                                            
+      - db                                                             
+    networks:                                                          
+      - db                                                     
+    volumes:                                                           
+      - /mnt/tank/dbs/postgres/nextcloud:/var/lib/postgresql/data      
+    restart: unless-stopped  
+  
+  redis:                                                               
+    image: redis:6.2.6-alpine                                           
+    container_name: redis                                              
+    volumes:                                                           
+      - /mnt/storage/dbs/redis/nextcloud:/data                         
+    restart: unless-stopped                                            
+    networks:                                                          
+      - db                                                      
+    profiles:                                                          
+      - all                                                            
+      - db  
+
+  photoview_db:
+    image: mariadb:10.5
+    container_name: photoview_db
+    restart: unless-stopped
+    environment:
+      - MARIADB_ROOT_PASSWORD={{ pv_rootpass }}
+      - MARIADB_USER={{ pv_dbuser }}
+      - MARIADB_PASSWORD={{ pv_dbpass }}
+      - MARIADB_DATABASE={{ pv_dbname }}
+    networks:
+      - db
+    profiles:
+      - all
+      - db
+    volumes:
+      - /mnt/tank/dbs/mariadb/photoview:/var/lib/mysql
+
+  photoview:
+    image: viktorstrate/photoview:2.3.12
+    container_name: photoview
+    restart: unless-stopped
+    depends_on:
+      - photoview_db
+    environment:
+      - PHOTOVIEW_DATABASE_DRIVER=mysql
+      - PHOTOVIEW_MYSQL_URL={{ pv_sqlurl }}
+      - PHOTOVIEW_LISTEN_IP=photoview
+      - PHOTOVIEW_LISTEN_PORT=80
+      - PHOTOVIEW_MEDIA_CACHE=/app/cache
+      - PHOTOVIEW_PUBLIC_ENDPOINT=https://photos.iyer.app
+      - MAPBOX_TOKEN={{ pv_mapbox }}
+    networks:
+      - traefik
+      - db
+    profiles:
+      - all
+      - tools
+    volumes:
+      - /mnt/tank/cache/photoview:/app/cache
+      - /mnt/tank/cloud/vik/files/InstantUpload:/photos-vik:ro
+      - /mnt/tank/cloud/sam/files/InstantUpload:/photos-sam:ro
+      - /mnt/tank/cloud/vik/files/Photos_By_Events:/photos-events:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.photoview.rule=Host(`photos.iyer.app`)
+      - traefik.http.routers.photoview.middlewares=localip@file
+
+networks:
+  traefik:
+    external: true
+  db:
+    internal: true

@@ -1,0 +1,38 @@
+- name: Create network
+  community.docker.docker_network:
+    name: traefik
+    internal: false
+
+- name: Create traefik directory
+  file:
+    path: /opt/docker/traefik
+    state: directory
+    owner: "{{ secret_username }}"
+    mode: "{{ docker_dir_mask }}"
+
+- name: Create config directory
+  file:
+    path: /opt/docker/traefik/traefik
+    state: directory
+    mode: "{{ docker_dir_mask }}"
+
+- name: Create file provider directory
+  file:
+    path: /opt/docker/traefik/traefik/conf
+    state: directory
+    mode: "{{ docker_dir_mask }}"
+
+- name: Install config
+  template: 
+    src: files/traefik/traefik.yaml
+    dest: /opt/docker/traefik/traefik/traefik.yaml
+    owner: "{{ secret_username }}"
+    mode: "{{ docker_dir_mask }}"
+  notify: restart docker  
+
+- name: Install main file-provider
+  template:
+    src: files/traefik/file-provider-main.yaml
+    dest: /opt/docker/traefik/traefik/conf
+    owner: "{{ secret_username }}"
+    mode: "{{ docker_file_mask }}"

@@ -1,0 +1,13 @@
+http:
+  middlewares:
+    # allow on internal LAN routes
+    localip:
+      ipwhitelist:
+        sourcerange:
+          - 127.0.0.1/32
+          - 192.168.1.0/24
+          - 10.5.1.0/24
+          - 10.7.0.0/16
+  serversTransports:
+    ignorecert:
+      insecureSkipVerify: true
