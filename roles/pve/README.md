@@ -1,49 +1,18 @@
-This role automates the installation of mergerfs and snapraid. The vars associated with the role define what versions of these software will be installed. So, if newer versions are released, you can update the vars/main.yaml file to reflect the newest installable packages. Mount points are automatically created, if they are not already present.
+## Adding new LXC containers
+- Open `vars/vault.yaml` for edit using `ansible-vault edit --vault-password .vault-pass vars/vault.yaml`.
+- Define a new LXC container (default template: Alpine) in the `lxc_mnts` variable.
+- Ensure `setup_infra = true`.
+- Run `make gaara`.
 
-Formatting of new drives should be done manually, as it is destructive if something goes wrong. So when adding a new drive, find the drive identifier ``/dev/sdX`` where X = a, b, c, ..., by doing ``sudo fdisk -l``. Then, create a single partition on the whole drive using ``gpart``.
+## Adding new disks to SnapRaid Array
+- Drive formatting and partitioning is done manually using `gpart`.
+- Define the disk in `roles/pve/vars/main.yaml` under the `data_disks` or `parity_disks` variable.
+- Ensure `setup_disks = true`.
+- Run `make gaara`.
 
-## Creating a disk partition
+## Enabling Wireguard (if running an application like wg-easy)
+- Right now, I am running Wireguard in pfSense. I'll document this if I switch to running a container. The role works though.
 
-Run the following as root:
-
-``sudo gdisk /dev/sdc``
-
-The following is copied from perfectmediaserver.com.
-
-Use the following sequence to create one large partition spanning the entire drive. Note that the keys you need to press are at the start of each heading and the answers to the subsequent questions at the ends of the next few lines.
-
-- o : creates a new EMPTY GPT partition table (GPT is good for large drives over 3TB)
-     
-Proceed? (Y/N) - Y
-
-- n : creates a new partition
-
-Partition number (1-128, default 1): 1
-
-First sector (34-15628053134, default = 2048) or {+-}size{KMGTP}: leave blank
-
-Last sector (2048-15628053134, default = 15628053134) or {+-}size{KMGTP}: leave blank
-
-Hex code or GUID (L to show codes, Enter = 8300): 8300
-
-- p : (optional) validate 1 large partition to be created
-
-- w : writes the changes made thus far
-
-Until this point, gdisk has been non-destructive
-
-Confirm that making these changes is OK and the changes queued so far will be executed
-
-## Filesystem creation
-
-Next, create ``ext4`` filesystems on the new drives.
-
-```
-mkfs.ext4 /dev/sdX1
-```
-
-The following is then taken care of by the ansible role described in ``disks.yaml``
-
-1. Mount disks and mergerfs mounts in /etc/fstab
-
-
+## Docker services on PVE host
+- Only applications which _need_ to be on the host machine. Other applications are run in the `dockermain` LXC.
+- Define services in `roles/pve/files/docker-compose.yaml`.

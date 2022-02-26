@@ -43,6 +43,5 @@
   vars_files:
     - 'vars/vault.yaml'
   roles:
-    - role: basics
     - role: docker_alpine
     - role: docker_apps
