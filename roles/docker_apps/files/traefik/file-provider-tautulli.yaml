@@ -1,0 +1,11 @@
+http:
+  routers:
+    router-tautulli:
+      rule: Host(`plex-stats.iyer.app`)
+      service: service-tautulli
+      middlewares: localip@file
+  services:
+    service-tautulli:
+      loadBalancer:
+        servers:
+          - url: http://192.168.1.202:8181

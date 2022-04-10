@@ -1,0 +1,10 @@
+http:
+  routers:
+    router-plex:
+      rule: Host(`plex.iyer.app`)
+      service: service-plex
+  services:
+    service-plex:
+      loadBalancer:
+        servers:
+          - url: http://192.168.1.202:32400

@@ -1,0 +1,12 @@
+[Unit]
+Description=Syncoid pull
+Requires=zfs.target
+After=zfs.target
+
+[Service]
+Environment=TZ=UTC
+Type=oneshot
+ExecStart=/opt/syncoid/syncoid
+
+[Install]
+WantedBy=timers.target

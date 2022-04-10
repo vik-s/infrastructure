@@ -1,0 +1,67 @@
+- name: Install dependencies for Debian
+  ansible.builtin.package:
+    name:
+      - debhelper
+      - libcapture-tiny-perl
+      - libconfig-inifiles-perl
+      - pv
+      - lzop
+      - mbuffer
+      - build-essential
+    state: present
+  when: ansible_os_family == 'Debian'
+
+- name: Download Sanoid/Syncoid
+  ansible.builtin.git:
+    repo: 'https://github.com/jimsalterjrs/sanoid.git'
+    dest: /opt/sanoid
+    version: v2.1.0
+
+- name: Create config directory
+  ansible.builtin.file:
+    path: /etc/sanoid
+    state: directory
+    mode: "0755"
+
+- name: Install default config
+  ansible.builtin.file:
+    src: /opt/sanoid/sanoid.defaults.conf
+    dest: /etc/sanoid/sanoid.defaults.conf
+    state: link
+
+- name: Install executables
+  file:
+    src: /opt/sanoid/{{ item }}
+    dest: /usr/sbin/{{ item }}
+    state: link
+  loop:
+    - sanoid
+    - syncoid
+    - findoid
+    - sleepymutex
+
+- name: Install config
+  template:
+    src: files/sanoid.conf
+    dest: /etc/sanoid/sanoid.conf
+    mode: "0755"
+
+- name: Install systemd services
+  file:
+    src: /opt/sanoid/packages/debian/{{ item }}
+    dest: /lib/systemd/system/{{ item }}
+    state: link
+  loop: "{{ sanoid_services }}"
+
+- name: Enable systemd services
+  systemd:
+    name: "{{ item }}"
+    enabled: true
+    masked: false
+  loop: "{{ sanoid_services }}"
+
+- name: Start sanoid services
+  systemd:
+    name: "{{ item }}" 
+    state: started
+  loop: "{{sanoid_services}}"

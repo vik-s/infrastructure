@@ -51,6 +51,11 @@
   ansible.builtin.shell:
     cmd: rc-update add docker boot
 
+- name: Ensure group docker exists
+  ansible.builtin.group:
+    name: docker
+    state: present
+
 - name: Add main user to docker group
   ansible.builtin.user:
     name: "{{ secret_username }}"

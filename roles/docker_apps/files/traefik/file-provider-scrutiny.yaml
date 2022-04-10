@@ -1,0 +1,11 @@
+http:
+  routers:
+    router-scrutiny:
+      rule: Host(`scrutiny.iyer.app`)
+      service: service-scrutiny
+      middlewares: localip@file
+  services:
+    service-scrutiny:
+      loadBalancer:
+        servers:
+          - url: http://192.168.1.210:8080

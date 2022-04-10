@@ -1,0 +1,48 @@
+- name: Copy server-to-server connection private key
+  ansible.builtin.copy:
+    src: files/server_privkey
+    dest: "/home/ansible/.ssh"
+    mode: "0600"
+    owner: "ansible"
+    group: "ansible"
+
+- name: Set backup zfs pool to be readonly with atime=off
+  community.general.zfs:
+    name: tank
+    state: present
+    extra_zfs_properties:
+      readonly: on
+      atime: off
+
+- name: Create syncoid directory
+  ansible.builtin.file:
+    path: /opt/syncoid
+    state: directory
+    mode: "0755"
+
+- name: Install syncoid script to run pulls
+  ansible.builtin.copy:
+    src: files/syncoid.sh
+    dest: "/opt/syncoid/syncoid"
+    mode: "0755"
+    owner: "root"
+    group: "root"
+
+- name: Install systemd services
+  copy:
+    src: files/{{ item }} 
+    dest: /lib/systemd/system/{{ item }}
+  loop: "{{ syncoid_services }}"
+
+- name: Enable systemd services
+  systemd:
+    name: "{{ item }}"
+    enabled: true
+    masked: false
+  loop: "{{ syncoid_services }}"
+
+- name: Start syncoid services
+  systemd:
+    name: "{{ item }}" 
+    state: started
+  loop: "{{ syncoid_services }}"

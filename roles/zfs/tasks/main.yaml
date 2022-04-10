@@ -1,0 +1,6 @@
+- name: Sanoid snapshots and backup
+  include: sanoid.yaml
+
+- name: Setup syncoid on backup server for pull replication
+  include: syncoid.yaml
+  when: backup_server

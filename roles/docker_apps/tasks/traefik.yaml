@@ -36,3 +36,24 @@
     dest: /opt/docker/traefik/traefik/conf
     owner: "{{ secret_username }}"
     mode: "{{ docker_file_mask }}"
+
+- name: Install plex file-provider
+  template:
+    src: files/traefik/file-provider-plex.yaml
+    dest: /opt/docker/traefik/traefik/conf
+    owner: "{{ secret_username }}"
+    mode: "{{ docker_file_mask }}"
+
+- name: Install tautulli file-provider
+  template:
+    src: files/traefik/file-provider-tautulli.yaml
+    dest: /opt/docker/traefik/traefik/conf
+    owner: "{{ secret_username }}"
+    mode: "{{ docker_file_mask }}"
+
+- name: Install scrutiny file-provider
+  template:
+    src: files/traefik/file-provider-scrutiny.yaml
+    dest: /opt/docker/traefik/traefik/conf
+    owner: "{{ secret_username }}"
+    mode: "{{ docker_file_mask }}"
