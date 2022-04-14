@@ -1,7 +1,7 @@
 [Unit]
 Description=Syncoid pull
-Requires=zfs.target
-After=zfs.target
+Requires=zfs.target network-online.target
+After=zfs.target network-online.target
 
 [Service]
 Environment=TZ=UTC

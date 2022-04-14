@@ -1,5 +1,6 @@
 [Unit]
 Description=Syncoid pull every night
+Requires=syncoid.service
 
 [Timer]
 OnCalendar=05:05:05
