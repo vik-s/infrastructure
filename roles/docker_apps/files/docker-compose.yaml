@@ -392,8 +392,6 @@ services:
   uptime-kuma:
     image: louislam/uptime-kuma:1.12.1-alpine
     container_name: uptime-kuma
-    security_opt: 
-      - no-new-privileges:true
     restart: unless-stopped
     volumes:
       - ./uptime-kuma:/app/data
@@ -411,6 +409,8 @@ services:
     image: ghcr.io/realorangeone/db-auto-backup:latest
     container_name: db-auto-backup
     restart: unless-stopped
+    security_opt: 
+      - no-new-privileges:true
     networks:
       - db
     profiles:
@@ -425,6 +425,8 @@ services:
   openbooks:
     image: evanbuss/openbooks:latest
     container_name: OpenBooks
+    security_opt: 
+      - no-new-privileges:true
     restart: unless-stopped
     command: --persist
     networks:
@@ -448,6 +450,8 @@ services:
       - TZ={{ TZ }}
     volumes:
       - ./calibre:/config
+      - /mnt/storage/media/library/calibre:/calibre
+      - /mnt/storage/media/library/books:/books
     restart: unless-stopped
     networks:
       - traefik
@@ -457,7 +461,9 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.calibre.rule=Host(`calibre.iyer.app`)
-      - traefik.http.routers.calbire.middlewares=localip@file
+      - traefik.http.services.calibre-service.loadbalancer.server.scheme=http
+      - traefik.http.services.calibre-service.loadbalancer.server.port=8080
+      - traefik.http.routers.calibre.middlewares=localip@file
 
 networks:
   traefik:
