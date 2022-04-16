@@ -392,6 +392,8 @@ services:
   uptime-kuma:
     image: louislam/uptime-kuma:1.12.1-alpine
     container_name: uptime-kuma
+    security_opt: 
+      - no-new-privileges:true
     restart: unless-stopped
     volumes:
       - ./uptime-kuma:/app/data
@@ -408,6 +410,8 @@ services:
   docker-db-auto-backup:
     image: ghcr.io/realorangeone/db-auto-backup:latest
     container_name: db-auto-backup
+    security_opt: 
+      - no-new-privileges:true
     restart: unless-stopped
     security_opt: 
       - no-new-privileges:true
@@ -444,6 +448,8 @@ services:
   calibre:
     image: lscr.io/linuxserver/calibre:5.40.0
     container_name: calibre
+    security_opt: 
+      - no-new-privileges:true
     environment:
       - PUID={{ docker_userid }}
       - PGID={{ docker_userid }}
@@ -452,6 +458,7 @@ services:
       - ./calibre:/config
       - /mnt/storage/media/library/calibre:/calibre
       - /mnt/storage/media/library/books:/books
+      - /mnt/storage/media/library/temp-books:/temp-books
     restart: unless-stopped
     networks:
       - traefik
@@ -464,6 +471,30 @@ services:
       - traefik.http.services.calibre-service.loadbalancer.server.scheme=http
       - traefik.http.services.calibre-service.loadbalancer.server.port=8080
       - traefik.http.routers.calibre.middlewares=localip@file
+
+  calibre-web:
+    image: lscr.io/linuxserver/calibre-web:0.6.18
+    container_name: calibre-web
+    security_opt: 
+      - no-new-privileges:true
+    environment:
+      - PUID={{ docker_userid }}
+      - PGID={{ docker_userid }}
+      - TZ={{ TZ }}
+      - DOCKER_MODS=linuxserver/calibre-web:calibre
+    volumes:
+      - ./calibre-web:/config
+      - /mnt/storage/media/library/calibre:/books
+    restart: unless-stopped
+    networks:
+      - traefik
+    profiles:
+      - all
+      - media
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.calibre-web.rule=Host(`calibre-web.iyer.app`)
+      - traefik.http.routers.calibre-web.middlewares=localip@file
 
 networks:
   traefik:
