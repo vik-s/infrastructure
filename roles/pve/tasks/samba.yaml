@@ -1,0 +1,7 @@
+- name: Copy smb.conf
+  ansible.builtin.copy:
+    src: files/smb.conf
+    dest: /etc/samba/smb.conf
+    owner: root
+    group: root
+    mode: "0744"

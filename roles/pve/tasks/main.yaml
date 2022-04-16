@@ -23,3 +23,6 @@
 
 - name: Setup docker apps on PVE host
   include: docker.yaml
+
+- name: Setup samba shares
+  include: samba.yaml
