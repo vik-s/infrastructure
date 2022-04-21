@@ -439,7 +439,7 @@ services:
       - all
       - media
     volumes:
-      - /mnt/storage/media/usenet:/books
+      - /mnt/tank/vik/temp-books:/books
     labels:
       - traefik.enable=true
       - traefik.http.routers.openbooks.rule=Host(`openbooks.iyer.app`)
@@ -456,9 +456,9 @@ services:
       - TZ={{ TZ }}
     volumes:
       - ./calibre:/config
-      - /mnt/storage/media/library/calibre:/calibre
+      - /mnt/tank/calibre:/calibre
       - /mnt/storage/media/library/books:/books
-      - /mnt/storage/media/library/temp-books:/temp-books
+      - /mnt/tank/vik/temp-books:/temp-books
     restart: unless-stopped
     networks:
       - traefik
@@ -484,7 +484,7 @@ services:
       - DOCKER_MODS=linuxserver/calibre-web:calibre
     volumes:
       - ./calibre-web:/config
-      - /mnt/storage/media/library/calibre:/books
+      - /mnt/tank/calibre:/books
     restart: unless-stopped
     networks:
       - traefik
