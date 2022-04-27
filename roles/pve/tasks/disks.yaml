@@ -66,5 +66,5 @@
     weekday: 6
     hour: 2
     minute: 0
-    job: python3 /opt/snapraid-runner/snapraid-runner.py -c /opt/snapraid-runner/snapraid-runner.conf
+    job: python3 /opt/snapraid-runner/snapraid-runner.py -c /opt/snapraid-runner/snapraid-runner.conf && /usr/bin/curl -m 10 --retry 3 "{{ hcid_snapraid }}"
 
