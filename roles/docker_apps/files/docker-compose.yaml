@@ -97,7 +97,7 @@ services:
       - traefik.http.routers.radarr.middlewares=localip@file
 
   sonarr:
-    image: ghcr.io/linuxserver/sonarr:3.0.7
+    image: ghcr.io/linuxserver/sonarr:3.0.8
     container_name: sonarr
     security_opt: 
       - no-new-privileges:true
