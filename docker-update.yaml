@@ -1,0 +1,23 @@
+---
+
+- hosts: "{{ host }}"
+  become: true
+  vars_files:
+    - 'vars/vault.yaml'
+  vars_prompt:
+    - name: host
+      prompt: Which host?
+      private: no
+  tasks:
+    - name: Docker Pull
+      command: "docker-compose pull"
+      args:
+        chdir: /opt/docker 
+
+    - name: Docker Update
+      command: "docker-compose --profile all up -d"
+      args:
+        chdir: /opt/docker 
+
+    - name: Docker prune
+      command: "docker image prune -af"
