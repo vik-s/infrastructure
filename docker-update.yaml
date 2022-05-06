@@ -4,11 +4,21 @@
   become: true
   vars_files:
     - 'vars/vault.yaml'
+    - 'roles/docker_apps/vars/main.yaml'
   vars_prompt:
     - name: host
       prompt: Which host?
       private: no
   tasks:
+    - name: Install docker compose file
+      template:
+        src: roles/docker_apps/files/docker-compose.yaml
+        dest: /opt/docker/docker-compose.yaml
+        mode: "{{ docker_file_mask }}"
+        owner: "{{ secret_username }}"
+        validate: docker-compose -f %s config
+      when: host == "dockermain"
+
     - name: Docker Pull
       command: "docker-compose pull"
       args:
