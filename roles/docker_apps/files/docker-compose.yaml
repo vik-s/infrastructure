@@ -496,6 +496,64 @@ services:
       - traefik.http.routers.calibre-web.rule=Host(`calibre-web.iyer.app`)
       - traefik.http.routers.calibre-web.middlewares=localip@file
 
+  vikunja:
+    image: vikunja/api:0.18.1
+    container_name: vikunja_api
+    environment:
+      VIKUNJA_DATABASE_HOST: vikunja_db
+      VIKUNJA_DATABASE_PASSWORD: vikunja
+      VIKUNJA_DATABASE_TYPE: mysql
+      VIKUNJA_DATABASE_USER: vikunja
+      VIKUNJA_DATABASE_DATABASE: vikunja
+    volumes: 
+      - ./vikunja/files:/app/vikunja/files
+    networks:
+      - traefik
+      - db
+    profiles:
+      - all
+      - tools 
+    depends_on:
+      - vikunja_db
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.vikunja-api.rule=Host(`vikunja.iyer.app`) && PathPrefix(`/api/v1`, `/dav/`, `/.well-known/`)
+  
+  vikunja_frontend:
+    image: vikunja/frontend:0.18.2
+    container_name: vikunja_frontend
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.vikunja-frontend.rule=Host(`vikunja.iyer.app`)
+    networks:
+      - traefik
+      - db
+    profiles:
+      - all
+      - tools 
+    restart: unless-stopped
+  
+  vikunja_db:
+    image: mariadb:10.8
+    container_name: vikunja_db
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: vikunja 
+      MYSQL_USER: vikunja
+      MYSQL_PASSWORD: vikunja
+      MYSQL_DATABASE: vikunja
+    volumes:
+      - /mnt/tank/dbs/mariadb/vikunja:/var/lib/mysql
+    restart: unless-stopped
+    command: --max-connections=1000
+    profiles:
+      - all
+      - tools 
+      - db
+    networks:
+      - db
+
 networks:
   traefik:
     external: true
