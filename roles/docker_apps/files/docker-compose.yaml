@@ -258,7 +258,7 @@ services:
       - traefik
 
   vaultwarden:
-    image: vaultwarden/server:1.24.0
+    image: vaultwarden/server:1.24.0-alpine
     container_name: vaultwarden
     security_opt: 
       - no-new-privileges:true
@@ -267,14 +267,41 @@ services:
     profiles:
       - all
       - tools
+    depends_on:
+      - vaultwarden_db
     networks:
       - traefik
+      - db
     restart: unless-stopped
+    environment:
+      - "DATABASE_URL={{ vw_sqlurl }}"
+      - ADMIN_TOKEN={{ vw_token }}
+      - RUST_BACKTRACE=1
     labels:
       - traefik.enable=true
       - traefik.http.routers.bitwarden.rule=Host(`bitwarden.iyer.app`)
       - traefik.http.routers.bitwarden.middlewares=localip@file
 
+  vaultwarden_db:
+    image: mariadb:10.8
+    container_name: vaultwarden_db
+    security_opt: 
+      - no-new-privileges:true
+    restart: unless-stopped 
+    volumes:
+      - /mnt/tank/dbs/mariadb/vaultwarden:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD={{ vw_rootpass }}
+      - MYSQL_PASSWORD={{ vw_dbpass }}
+      - MYSQL_DATABASE={{ vw_dbname }}
+      - MYSQL_USER={{ vw_dbuser }}
+    profiles:
+      - all
+      - tools
+      - db
+    networks:
+      - db
+  
   nextcloud:                                                           
     image: lscr.io/linuxserver/nextcloud:version-23.0.4
     container_name: nextcloud                                          
@@ -371,7 +398,7 @@ services:
       - PHOTOVIEW_LISTEN_IP=photoview
       - PHOTOVIEW_LISTEN_PORT=80
       - PHOTOVIEW_MEDIA_CACHE=/app/cache
-      - PHOTOVIEW_PUBLIC_ENDPOINT=https://photos.iyer.app
+      - PHOTOVIEW_PUBLIC_ENDPOINT={{ pv_endpt }}
       - MAPBOX_TOKEN={{ pv_mapbox }}
     networks:
       - traefik
