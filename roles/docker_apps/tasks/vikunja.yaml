@@ -1,0 +1,13 @@
+- name: Create vikunja directory
+  file:
+    path: /opt/docker/vikunja
+    state: directory
+    owner: "{{ secret_username }}"
+    mode: "{{ docker_dir_mask }}"
+      
+- name: Install config
+  template: 
+    src: files/vikunja/config.yaml
+    dest: /opt/docker/vikunja/config.yaml
+    owner: "{{ secret_username }}"
+    mode: "{{ docker_dir_mask }}"

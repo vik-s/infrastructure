@@ -526,14 +526,9 @@ services:
   vikunja:
     image: vikunja/api:0.18.1
     container_name: vikunja_api
-    environment:
-      VIKUNJA_DATABASE_HOST: vikunja_db
-      VIKUNJA_DATABASE_PASSWORD: vikunja
-      VIKUNJA_DATABASE_TYPE: mysql
-      VIKUNJA_DATABASE_USER: vikunja
-      VIKUNJA_DATABASE_DATABASE: vikunja
     volumes: 
       - ./vikunja/files:/app/vikunja/files
+      - ./vikunja/config.yaml:/app/vikunja/config.yaml
     networks:
       - traefik
       - db

@@ -6,6 +6,9 @@
 - name: Create traefik directory structure
   include: traefik.yaml
 
+- name: Setup vikunja
+  include: vikunja.yaml
+
 - name: Install docker compose file
   template:
     src: files/docker-compose.yaml
