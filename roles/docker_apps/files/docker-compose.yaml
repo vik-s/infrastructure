@@ -576,6 +576,24 @@ services:
     networks:
       - db
 
+  homer:
+    image: b4bz/homer:22.02.2
+    container_name: homer
+    security_opt: 
+      - no-new-privileges:true
+    volumes:
+      - ./homer:/www/assets
+    restart: unless-stopped
+    networks:
+      - traefik
+    profiles:
+      - all
+      - tools 
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.homer.rule=Host(`www.iyer.app`)
+      - traefik.http.routers.homer.middlewares=localip@file
+
 networks:
   traefik:
     external: true
