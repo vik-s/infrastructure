@@ -366,7 +366,7 @@ services:
       - db  
 
   photoview_db:
-    image: mariadb:10.5
+    image: mariadb:10.8
     container_name: photoview_db
     security_opt: 
       - no-new-privileges:true
