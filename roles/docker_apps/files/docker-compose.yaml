@@ -51,7 +51,7 @@ services:
       - traefik.http.routers.librespeed.middlewares=localip@file
 
   sabnzbd:
-    image: ghcr.io/linuxserver/sabnzbd:3.5.3
+    image: ghcr.io/linuxserver/sabnzbd:3.6.0
     container_name: sabnzbd
     security_opt: 
       - no-new-privileges:true
@@ -358,7 +358,7 @@ services:
     restart: unless-stopped  
   
   redis:                                                               
-    image: redis:6.2.6-alpine                                           
+    image: redis:7.0.0-alpine                                           
     container_name: redis                                              
     security_opt: 
       - no-new-privileges:true
@@ -423,7 +423,7 @@ services:
       - traefik.http.routers.photoview.middlewares=localip@file
 
   uptime-kuma:
-    image: louislam/uptime-kuma:1.15.1-alpine
+    image: louislam/uptime-kuma:1.16.1-alpine
     container_name: uptime-kuma
     security_opt: 
       - no-new-privileges:true
@@ -479,7 +479,7 @@ services:
       - traefik.http.routers.openbooks.middlewares=localip@file
 
   calibre:
-    image: lscr.io/linuxserver/calibre:5.42.0
+    image: lscr.io/linuxserver/calibre:5.43.0
     container_name: calibre
     security_opt: 
       - no-new-privileges:true
