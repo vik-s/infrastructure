@@ -1,0 +1,206 @@
+---
+# Homepage configuration
+# See https://fontawesome.com/v5/search for icons options
+
+title: "Welcome home!"
+subtitle: "PreDawnSpiders"
+documentTitle: "PreDawnSpiders" # Customize the browser tab text
+icon: "fas fa-spider"
+
+header: true # Set to false to hide the header
+# Optional: Different hotkey for search, defaults to "/"
+# hotkey:
+#   search: "Shift"
+footer: false 
+
+columns: "4" # "auto" or number (must be a factor of 12: 1, 2, 3, 4, 6, 12)
+connectivityCheck: true # whether you want to display a message when the apps are not accessible anymore (VPN disconnected for example)
+
+# Set the default layout and color scheme
+defaults:
+  layout: columns # Either 'columns', or 'list'
+  colorTheme: auto # One of 'auto', 'light', or 'dark'
+
+colors:
+  light:
+    highlight-primary: "#3367d6"
+    highlight-secondary: "#4285f4"
+    highlight-hover: "#5a95f5"
+    background: "#f5f5f5"
+    card-background: "#ffffff"
+    text: "#363636"
+    text-header: "#424242"
+    text-title: "#303030"
+    text-subtitle: "#424242"
+    card-shadow: rgba(0, 0, 0, 0.1)
+    link: "#3273dc"
+    link-hover: "#363636"
+    background-image: "assets/your/light/bg.png"
+  dark:
+    highlight-primary: "#3367d6"
+    highlight-secondary: "#4285f4"
+    highlight-hover: "#5a95f5"
+    background: "#131313"
+    card-background: "#2b2b2b"
+    text: "#eaeaea"
+    text-header: "#ffffff"
+    text-title: "#fafafa"
+    text-subtitle: "#f5f5f5"
+    card-shadow: rgba(0, 0, 0, 0.4)
+    link: "#3273dc"
+    link-hover: "#ffdd57"
+    background-image: "assets/your/dark/bg.png"
+
+# Optional navbar
+links:
+  - name: "Vikram"
+    icon: "fas fa-file-alt"
+    url: "#page2"
+
+# Services
+# First level array represents a group.
+# Leave only a "items" key if not using group (group name, icon & tagstyle are optional, section separation will not be displayed).
+services:
+  - name: "Media"
+    icon: "fas fa-compact-disc"
+    items:
+      - name: "Plex"
+        logo: "assets/tools/plex.png"
+        subtitle: "Media server"
+        tag: "media"
+        keywords: "media" 
+        url: "https://plex.iyer.app"
+
+      - name: "Tautulli"
+        logo: "assets/tools/tautulli.png"
+        subtitle: "Media server statistics"
+        tag: "media"
+        keywords: "media" 
+        url: "https://plex-stats.iyer.app"
+
+      - name: "Overseerr"
+        logo: "assets/tools/overseerr.png"
+        subtitle: "Request Media"
+        tag: "media"
+        keywords: "media" 
+        url: "https://overseerr.iyer.app"
+
+      - name: "Photoview"
+        logo: "assets/tools/photoview.png"
+        subtitle: "Personal Photo Library"
+        tag: "media"
+        keywords: "media" 
+        url: "https://photos.iyer.app"
+
+      - name: "Calibre-Web"
+        logo: "assets/tools/calibreweb.png"
+        subtitle: "Ebook Library"
+        tag: "media"
+        keywords: "media" 
+        url: "https://calibre-web.iyer.app"
+
+  - name: "Collectors"
+    icon: "fas fa-compact-disc"
+    items:
+      - name: "Radarr"
+        logo: "assets/tools/radarr.png"
+        subtitle: "Movie Collector"
+        tag: "media"
+        keywords: "media" 
+        url: "https://radarr.iyer.app"
+
+      - name: "Sonarr"
+        logo: "assets/tools/sonarr.png"
+        subtitle: "TV Collector"
+        tag: "media"
+        keywords: "media" 
+        url: "https://sonarr.iyer.app"
+
+      - name: "Lidarr"
+        logo: "assets/tools/lidarr.png"
+        subtitle: "Music Collector"
+        tag: "media"
+        keywords: "media" 
+        url: "https://lidarr.iyer.app"
+
+      - name: "Sabnzbd"
+        logo: "assets/tools/sabnzbd.png"
+        subtitle: "Downloader"
+        tag: "media"
+        keywords: "media" 
+        url: "https://sabnzbd.iyer.app"
+
+      - name: "Prowlarr"
+        logo: "assets/tools/prowlarr.png"
+        subtitle: "Indexer Manager"
+        tag: "media"
+        keywords: "media" 
+        url: "https://prowlarr.iyer.app"
+
+      - name: "Openbooks"
+        logo: "assets/tools/openbooks.png"
+        subtitle: "Book Collector"
+        tag: "media"
+        keywords: "media" 
+        url: "https://openbooks.iyer.app"
+
+      - name: "Calibre"
+        logo: "assets/tools/calibre.png"
+        subtitle: "Ebook Converter"
+        tag: "media"
+        keywords: "media" 
+        url: "https://calibre.iyer.app"
+
+  - name: "Tools"
+    icon: "fas fa-cogs"
+    items:
+      - name: "Nextcloud"
+        logo: "assets/tools/nextcloud.png"
+        subtitle: "File Cloud" 
+        tag: "tool"
+        url: "https://cloud.iyer.app"
+
+      - name: "Bitwarden"
+        logo: "assets/tools/bitwarden.png"
+        subtitle: "Password Vault" 
+        tag: "tool"
+        url: "https://bitwarden.iyer.app"
+
+      - name: "Vikunja"
+        logo: "assets/tools/vikunja.png"
+        subtitle: "To-Do Manager" 
+        tag: "tool"
+        url: "https://vikunja.iyer.app"
+
+      - name: "Librespeed"
+        logo: "assets/tools/librespeed.png"
+        subtitle: "Bandwidth Speed Test" 
+        tag: "tool"
+        url: "https://librespeed.iyer.app"
+
+      - name: "Uptime-Kuma"
+        logo: "assets/tools/uptimekuma.png"
+        subtitle: "Uptime Monitoring" 
+        tag: "tool"
+        url: "https://status.iyer.app"
+
+      - name: "Scrutiny"
+        logo: "assets/tools/scrutiny.png"
+        subtitle: "Drive Monitoring" 
+        tag: "tool"
+        url: "https://scrutiny.iyer.app"
+
+  - name: "Network"
+    icon: "fas fa-network-wired"
+    items:
+      - name: "pfSense"
+        logo: "assets/tools/pfsense.png"
+        subtitle: "Edge Router" 
+        tag: "network"
+        url: "https://pfSense.iyer.lan"
+
+      - name: "Traefik"
+        logo: "assets/tools/traefik.png"
+        subtitle: "Reverse Proxy" 
+        tag: "network"
+        url: "https://traefik.iyer.app/dashboard/#"

@@ -9,6 +9,9 @@
 - name: Setup vikunja
   include: vikunja.yaml
 
+- name: Setup homer
+  include: homer.yaml
+
 - name: Install docker compose file
   template:
     src: files/docker-compose.yaml

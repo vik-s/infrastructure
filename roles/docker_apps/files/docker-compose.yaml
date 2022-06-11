@@ -275,8 +275,14 @@ services:
     restart: unless-stopped
     environment:
       - "DATABASE_URL={{ vw_sqlurl }}"
-      - ADMIN_TOKEN={{ vw_token }}
-      - RUST_BACKTRACE=1
+      - DISABLE_ADMIN_TOKEN=true
+      - SMTP_HOST=smtp.fastmail.com
+      - SMTP_FROM={{ smtp_from }}
+      - SMTP_PORT=587
+      - SMTP_USERNAME={{ smtp_user }}
+      - SMTP_PASSWORD={{ smtp_vw_password }}
+      - SIGNUPS_ALLOWED=false
+      - INVITATIONS_ALLOWED=false
     labels:
       - traefik.enable=true
       - traefik.http.routers.bitwarden.rule=Host(`bitwarden.iyer.app`)
@@ -591,7 +597,7 @@ services:
       - tools 
     labels:
       - traefik.enable=true
-      - traefik.http.routers.homer.rule=Host(`www.iyer.app`)
+      - traefik.http.routers.homer.rule=Host(`www.iyer.app`) || Host(`iyer.app`)
       - traefik.http.routers.homer.middlewares=localip@file
 
 networks:
