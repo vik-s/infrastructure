@@ -164,7 +164,7 @@ services:
       - traefik.http.routers.lidarr.middlewares=localip@file
 
   prowlarr:
-    image: ghcr.io/linuxserver/prowlarr:0.3.0-develop
+    image: ghcr.io/linuxserver/prowlarr:0.4.2-develop
     container_name: prowlarr
     security_opt: 
       - no-new-privileges:true
@@ -423,7 +423,7 @@ services:
       - traefik.http.routers.photoview.middlewares=localip@file
 
   uptime-kuma:
-    image: louislam/uptime-kuma:1.16.1-alpine
+    image: louislam/uptime-kuma:1.17.1-alpine
     container_name: uptime-kuma
     security_opt: 
       - no-new-privileges:true
@@ -479,7 +479,7 @@ services:
       - traefik.http.routers.openbooks.middlewares=localip@file
 
   calibre:
-    image: lscr.io/linuxserver/calibre:5.43.0
+    image: lscr.io/linuxserver/calibre:5.44.0
     container_name: calibre
     security_opt: 
       - no-new-privileges:true
@@ -583,7 +583,7 @@ services:
       - db
 
   homer:
-    image: b4bz/homer:v22.06.1
+    image: b4bz/homer:v22.07.1
     container_name: homer
     security_opt: 
       - no-new-privileges:true
