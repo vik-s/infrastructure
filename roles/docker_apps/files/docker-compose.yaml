@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   traefik:
-    image: traefik:v2.7
+    image: traefik:v2.8
     container_name: traefik
     security_opt: 
       - no-new-privileges:true
@@ -164,7 +164,7 @@ services:
       - traefik.http.routers.lidarr.middlewares=localip@file
 
   prowlarr:
-    image: ghcr.io/linuxserver/prowlarr:0.4.2-develop
+    image: ghcr.io/linuxserver/prowlarr:0.4.3-develop
     container_name: prowlarr
     security_opt: 
       - no-new-privileges:true
@@ -258,7 +258,7 @@ services:
       - traefik
 
   vaultwarden:
-    image: vaultwarden/server:1.25.0-alpine
+    image: vaultwarden/server:1.25.2-alpine
     container_name: vaultwarden
     security_opt: 
       - no-new-privileges:true
@@ -358,7 +358,7 @@ services:
     restart: unless-stopped  
   
   redis:                                                               
-    image: redis:7.0.1-alpine                                           
+    image: redis:7.0.4-alpine                                           
     container_name: redis                                              
     security_opt: 
       - no-new-privileges:true
@@ -391,7 +391,7 @@ services:
       - /mnt/tank/dbs/mariadb/photoview:/var/lib/mysql
 
   photoview:
-    image: viktorstrate/photoview:2.3.12
+    image: viktorstrate/photoview:2.3.13
     container_name: photoview
     security_opt: 
       - no-new-privileges:true
@@ -479,7 +479,7 @@ services:
       - traefik.http.routers.openbooks.middlewares=localip@file
 
   calibre:
-    image: lscr.io/linuxserver/calibre:6.0.0
+    image: lscr.io/linuxserver/calibre:6.2.1
     container_name: calibre
     security_opt: 
       - no-new-privileges:true
@@ -583,7 +583,7 @@ services:
       - db
 
   homer:
-    image: b4bz/homer:v22.07.1
+    image: b4bz/homer:v22.07.2
     container_name: homer
     security_opt: 
       - no-new-privileges:true
