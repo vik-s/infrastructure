@@ -258,7 +258,7 @@ services:
       - traefik
 
   vaultwarden:
-    image: vaultwarden/server:1.25.0-alpine
+    image: vaultwarden/server:1.25.2-alpine
     container_name: vaultwarden
     security_opt: 
       - no-new-privileges:true
