@@ -99,6 +99,13 @@ services:
         keywords: "media" 
         url: "https://calibre-web.iyer.app"
 
+      - name: "Kavita"
+        logo: "assets/tools/kavita.jpg"
+        subtitle: "Comics Library"
+        tag: "media"
+        keywords: "media" 
+        url: "https://kavita.iyer.app"
+
   - name: "Collectors"
     icon: "fas fa-compact-disc"
     items:
@@ -150,6 +157,13 @@ services:
         tag: "media"
         keywords: "media" 
         url: "https://calibre.iyer.app"
+
+      - name: "Mylar3"
+        logo: "assets/tools/mylar.png"
+        subtitle: "Comics Collector"
+        tag: "media"
+        keywords: "media" 
+        url: "https://mylar3.iyer.app"
 
   - name: "Tools"
     icon: "fas fa-cogs"

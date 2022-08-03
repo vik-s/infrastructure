@@ -185,78 +185,6 @@ services:
       - traefik.http.routers.prowlarr.rule=Host(`prowlarr.iyer.app`)
       - traefik.http.routers.prowlarr.middlewares=localip@file
   
-  amd:
-    image: randomninjaatk/amd 
-    container_name: amd
-    security_opt: 
-      - no-new-privileges:true
-    volumes:
-      - ./lidarr:/config
-      - /mnt/storage/media/usenet/music:/downloads-amd
-    environment:
-      - PUID={{ docker_userid }}
-      - PGID={{ docker_userid }}
-      - AUTOSTART=true
-      - SCRIPTINTERVAL=1h
-      - DOWNLOADMODE=wanted
-      - FALLBACKSEARCH=True
-      - LIST=both
-      - SearchType=both
-      - Concurrency=1
-      - EMBEDDED_COVER_QUALITY=80
-      - FORMAT=FLAC
-      - BITRATE=320
-      - ENABLEPOSTPROCESSING=true
-      - FORCECONVERT=false
-      - requirequality=false
-      - MatchDistance=10
-      - replaygain=true
-      - FolderPermissions=766
-      - FilePermissions=666
-      - MBRAINZMIRROR=https://musicbrainz.org
-      - MBRATELIMIT=1
-      - LidarrUrl={{ lidarr_url }}
-      - LidarrAPIkey={{ lidarr_apikey }}
-    restart: unless-stopped
-    profiles:
-      - all
-      - media
-    networks:
-      - traefik
-
-  amvd:
-    image: randomninjaatk/amvd 
-    container_name: amvd
-    security_opt: 
-      - no-new-privileges:true
-    volumes:
-      - ./lidarr:/config
-      - /mnt/storage/media/library/music-videos:/downloads-amvd
-    environment:
-      - PUID={{ docker_userid }}
-      - PGID={{ docker_userid }}
-      - AUTOSTART=true
-      - SCRIPTINTERVAL=1h
-      - SOURCE_CONNECTION=lidarr
-      - RequireVideoMatch=true
-      - subtitlelanguage=en
-      - videofilter=live
-      - USEFOLDERS=true
-      - USEVIDEOFOLDERS=true
-      - FilePermissions=644
-      - FolderPermissions=755
-      - MBRAINZMIRROR=https://musicbrainz.org
-      - MBRATELIMIT=1
-      - LidarrUrl={{ lidarr_url }}
-      - LidarrAPIkey={{ lidarr_apikey }}
-      - CountryCode=us
-    restart: unless-stopped
-    profiles:
-      - all
-      - media
-    networks:
-      - traefik
-
   vaultwarden:
     image: vaultwarden/server:1.25.2-alpine
     container_name: vaultwarden
@@ -660,6 +588,51 @@ services:
       - traefik.enable=true
       - traefik.http.routers.kavita.rule=Host(`kavita.iyer.app`)
       - traefik.http.routers.kavita.middlewares=localip@file
+
+  huggin_db:
+    image: mariadb:10.8
+    container_name: huggin_db
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      MYSQL_ROOT_PASSWORD: {{ hg_rootpass }} 
+      MYSQL_USER: {{ hg_dbuser }}
+      MYSQL_PASSWORD: {{ hg_dbpass }}
+      MYSQL_DATABASE: {{ hg_dbname }}
+    networks:
+      - db
+    volumes:
+      - /mnt/tank/dbs/mariadb/huggin:/var/lib/mysql
+    restart: unless-stopped
+    profiles:
+      - all
+      - db
+
+  huggin:
+    image: huginn/huginn:68b759a3f0874507d1871cf5c4700950579818d9
+    container_name: huggin
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      HUGGIN_DATABASE_NAME: {{ hg_dbname }}
+      HUGGIN_DATABASE_USERNAME: {{ hg_dbuser }}
+      HUGGIN_DATABASE_PASSWORD: {{ hg_dbpass }}
+      DOMAIN: "iyer.app"
+      DO_NOT_SEED: 1
+      DO_NOT_CREATE_DATABASE: 1
+    depends_on:
+      - huggin_db
+    restart: unless-stopped
+    profiles:
+      - all
+      - tools
+    networks:
+      - traefik
+      - db
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.huggin.rule=Host(`huggin.iyer.app`)
+      - traefik.http.routers.huggin.middlewares=localip@file
 
 networks:
   traefik:
