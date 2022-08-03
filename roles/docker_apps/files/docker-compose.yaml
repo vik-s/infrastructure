@@ -477,7 +477,7 @@ services:
       - traefik.http.routers.vikunja-api.rule=Host(`vikunja.iyer.app`) && PathPrefix(`/api/v1`, `/dav/`, `/.well-known/`)
   
   vikunja_frontend:
-    image: vikunja/frontend:0.18.2
+    image: vikunja/frontend:0.19.0
     container_name: vikunja_frontend
     labels:
       - traefik.enable=true
