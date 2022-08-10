@@ -549,7 +549,7 @@ services:
       - traefik.http.routers.homer.middlewares=localip@file
 
   mylar3:
-    image: lscr.io/linuxserver/mylar3:0.6.8
+    image: lscr.io/linuxserver/mylar3:0.6.9
     container_name: mylar3
     security_opt:
       - no-new-privileges:true
