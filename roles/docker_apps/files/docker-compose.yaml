@@ -217,7 +217,7 @@ services:
       - traefik.http.routers.bitwarden.middlewares=localip@file
 
   vaultwarden_db:
-    image: mariadb:10.8
+    image: mariadb:10.9
     container_name: vaultwarden_db
     security_opt: 
       - no-new-privileges:true
@@ -300,7 +300,7 @@ services:
       - db  
 
   photoview_db:
-    image: mariadb:10.8
+    image: mariadb:10.9
     container_name: photoview_db
     security_opt: 
       - no-new-privileges:true
@@ -491,7 +491,7 @@ services:
     restart: unless-stopped
   
   vikunja_db:
-    image: mariadb:10.8
+    image: mariadb:10.9
     container_name: vikunja_db
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     environment:
@@ -590,7 +590,7 @@ services:
       - traefik.http.routers.kavita.middlewares=localip@file
 
   huggin_db:
-    image: mariadb:10.8
+    image: mariadb:10.9
     container_name: huggin_db
     security_opt:
       - no-new-privileges:true
