@@ -12,10 +12,13 @@
 - name: Setup homer
   include: homer.yaml
 
+- name: Setup tandoor
+  include: tandoor.yaml
+
 - name: Install docker compose file
   template:
     src: files/docker-compose.yaml
     dest: /opt/docker/docker-compose.yaml
     mode: "{{ docker_file_mask }}"
     owner: "{{ secret_username }}"
-    validate: docker-compose -f %s config
+      #    validate: docker-compose -f %s config

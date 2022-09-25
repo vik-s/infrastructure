@@ -1,0 +1,13 @@
+- name: Create tandoor directory
+  file:
+    path: /opt/docker/tandoor
+    state: directory
+    owner: "{{ secret_username }}"
+    mode: "{{ docker_dir_mask }}"
+      
+- name: Install .env file 
+  template: 
+    src: files/tandoor/.env
+    dest: /opt/docker/tandoor/.env
+    owner: "{{ secret_username }}"
+    mode: "{{ docker_dir_mask }}"

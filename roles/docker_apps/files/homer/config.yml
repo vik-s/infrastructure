@@ -204,6 +204,18 @@ services:
         tag: "tool"
         url: "https://scrutiny.iyer.app"
 
+      - name: "Huginn"
+        logo: "assets/tools/huginn.png"
+        subtitle: "Task Agent" 
+        tag: "tool"
+        url: "https://huginn.iyer.app"
+
+      - name: "Tandoor"
+        logo: "assets/tools/tandoorrecipes.png"
+        subtitle: "Recipe Manager" 
+        tag: "tool"
+        url: "https://recipes.iyer.app"
+
   - name: "Network"
     icon: "fas fa-network-wired"
     items:

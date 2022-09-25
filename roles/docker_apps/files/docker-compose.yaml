@@ -631,11 +631,99 @@ services:
       - db
     labels:
       - traefik.enable=true
-      - traefik.http.routers.huggin.rule=Host(`huggin.iyer.app`)
-      - traefik.http.routers.huggin.middlewares=localip@file
+      - traefik.http.routers.huginn.rule=Host(`huginn.iyer.app`)
+      - traefik.http.routers.huginn.middlewares=localip@file
+
+  homeassistant:
+    image: homeassistant/home-assistant:2022.8
+    container_name: homeassistant
+    volumes:
+      - ./homeassistant:/config
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    privileged: true
+    environment:
+      - PUID={{ docker_userid }}
+      - PGID={{ docker_userid }}
+      - TZ={{ TZ }}
+    profiles:
+      - all
+      - tools
+    network_mode: host
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.ha.rule=Host(`ha.iyer.app`)
+      - traefik.http.routers.ha.middlewares=localip@file
+      - traefik.http.services.ha.loadbalancer.server.port=8123
+
+  db_recipes:
+    restart: unless-stopped
+    image: postgres:11-alpine
+    container_name: db_recipes
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - /mnt/tank/dbs/postgres/tandoor:/var/lib/postgresql/data
+    env_file:
+      - ./tandoor/.env
+    networks:
+      - db
+      - traefik
+    profiles:
+      - all
+      - db
+
+  web_recipes:
+    restart: unless-stopped 
+    image: vabene1111/recipes:1.3.3
+    container_name: web_recipes
+    security_opt:
+      - no-new-privileges:true
+    env_file:
+      - ./tandoor/.env
+    volumes:
+      - tandoor_staticfiles:/opt/recipes/staticfiles
+      - tandoor_nginx:/opt/recipes/nginx/conf.d
+      - ./tandoor/mediafiles:/opt/recipes/mediafiles
+    depends_on:
+      - db_recipes
+    networks:
+      - db
+      - traefik
+    profiles:
+      - all
+      - tools`
+
+  nginx_recipes:
+    image: nginx:mainline-alpine
+    container_name: nginx_recipes
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    env_file:
+      - ./tandoor/.env
+    volumes:
+      - tandoor_nginx:/etc/nginx/conf.d
+      - tandoor_staticfiles:/static
+      - ./tandoor/mediafiles:/media
+    depends_on:
+      - web_recipes
+    networks:
+      - db
+      - traefik
+    profiles:
+      - all
+      - tools`
+    labels: 
+      - traefik.enable=true
+      - traefik.http.routers.recipes.rule=Host(`recipes.iyer.app`)
 
 networks:
   traefik:
     external: true
   db:
     internal: true
+
+volumes:
+  tandoor_nginx:
+  tandoor_staticfiles:
