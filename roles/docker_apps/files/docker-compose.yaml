@@ -529,7 +529,7 @@ services:
       - traefik.http.routers.homer.middlewares=localip@file
 
   collabora:
-    image: collabora/code:21.11.5.3.1
+    image: collabora/code:22.05.6.3.1
     container_name: collabora
     security_opt:
       - no-new-privileges:true
