@@ -16,7 +16,7 @@
         dest: /opt/docker/docker-compose.yaml
         mode: "{{ docker_file_mask }}"
         owner: "{{ secret_username }}"
-        validate: docker-compose -f %s config
+        # validate: docker-compose -f %s config
       when: host == "dockermain"
 
     - name: Docker Pull

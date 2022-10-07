@@ -57,3 +57,10 @@
     dest: /opt/docker/traefik/traefik/conf
     owner: "{{ secret_username }}"
     mode: "{{ docker_file_mask }}"
+
+- name: Install photoprism file-provider
+  template:
+    src: files/traefik/file-provider-photoprism.yaml
+    dest: /opt/docker/traefik/traefik/conf
+    owner: "{{ secret_username }}"
+    mode: "{{ docker_file_mask }}"
