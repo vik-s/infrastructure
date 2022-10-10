@@ -351,7 +351,7 @@ services:
       - traefik.http.routers.photoview.middlewares=localip@file
 
   uptime-kuma:
-    image: louislam/uptime-kuma:1.18.4-alpine
+    image: louislam/uptime-kuma:1.18.5-alpine
     container_name: uptime-kuma
     security_opt: 
       - no-new-privileges:true
