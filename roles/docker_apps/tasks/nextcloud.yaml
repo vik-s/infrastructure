@@ -1,0 +1,6 @@
+- name: Install cron for user abc 
+  template: 
+    src: files/nextcloud/cron
+    dest: /opt/docker/nextcloud/crontabs/abc
+    owner: "{{ secret_username }}"
+    mode: "{{ docker_dir_mask }}"

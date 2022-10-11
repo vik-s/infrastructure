@@ -15,6 +15,9 @@
 - name: Setup tandoor
   include: tandoor.yaml
 
+- name: Setup nextcloud
+  include: nextcloud.yaml
+
 - name: Install docker compose file
   template:
     src: files/docker-compose.yaml

@@ -1,0 +1,1 @@
+0 */12 * * *    sudo -u abc php7 /config/www/nextcloud/occ files:scan --all

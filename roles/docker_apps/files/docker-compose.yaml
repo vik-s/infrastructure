@@ -245,6 +245,7 @@ services:
       - PUID={{ docker_userid }}                                                      
       - PGID={{ docker_userid }}                                       
       - TZ={{ TZ }}                                       
+      - DOCKER_MODS=linuxserver/mods:universal-cron
     volumes:                                                           
       - ./nextcloud:/config                                            
       - /mnt/tank/cloud:/data                                          
