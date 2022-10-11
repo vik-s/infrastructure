@@ -269,7 +269,7 @@ services:
       - traefik.http.routers.nextcloud.middlewares=nextcloud-hsts@docker
 
   nextcloud_db:                                                          
-    image: postgres:13.5-alpine                                        
+    image: postgres:14.5-alpine                                        
     container_name: postgresql
     security_opt: 
       - no-new-privileges:true
@@ -283,7 +283,7 @@ services:
     networks:                                                          
       - db                                                     
     volumes:                                                           
-      - /mnt/tank/dbs/postgres/nextcloud:/var/lib/postgresql/data      
+      - /mnt/tank/dbs/postgres/nextcloud14:/var/lib/postgresql/data      
     restart: unless-stopped  
   
   redis:                                                               
