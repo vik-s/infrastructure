@@ -237,7 +237,7 @@ services:
       - db
   
   nextcloud:                                                           
-    image: lscr.io/linuxserver/nextcloud:version-23.0.4
+    image: lscr.io/linuxserver/nextcloud:version-24.0.6
     container_name: nextcloud                                          
     security_opt: 
       - no-new-privileges:true
