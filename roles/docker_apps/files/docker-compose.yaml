@@ -615,9 +615,11 @@ services:
     security_opt:
       - no-new-privileges:true
     environment:
-      HUGGIN_DATABASE_NAME: {{ hg_dbname }}
-      HUGGIN_DATABASE_USERNAME: {{ hg_dbuser }}
-      HUGGIN_DATABASE_PASSWORD: {{ hg_dbpass }}
+      DATABASE_ADAPTER: mysql2
+      DATABASE_HOST: huggin_db
+      HUGINN_DATABASE_NAME: {{ hg_dbname }}
+      HUGINN_DATABASE_USERNAME: {{ hg_dbuser }}
+      HUGINN_DATABASE_PASSWORD: {{ hg_dbpass }}
       DOMAIN: "iyer.app"
       DO_NOT_SEED: 1
       DO_NOT_CREATE_DATABASE: 1
