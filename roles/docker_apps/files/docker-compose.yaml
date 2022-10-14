@@ -269,7 +269,7 @@ services:
       - traefik.http.routers.nextcloud.middlewares=nextcloud-hsts@docker
 
   nextcloud_db:                                                          
-    image: postgres:14.5-alpine                                        
+    image: postgres:15.0-alpine                                        
     container_name: postgresql
     security_opt: 
       - no-new-privileges:true
@@ -661,7 +661,7 @@ services:
 
   db_recipes:
     restart: unless-stopped
-    image: postgres:11-alpine
+    image: postgres:15-alpine
     container_name: db_recipes
     security_opt:
       - no-new-privileges:true
