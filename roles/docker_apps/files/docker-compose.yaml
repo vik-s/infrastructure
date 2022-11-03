@@ -638,7 +638,7 @@ services:
       - traefik.http.routers.huginn.middlewares=localip@file
 
   homeassistant:
-    image: homeassistant/home-assistant:2022.10
+    image: homeassistant/home-assistant:2022.11
     container_name: homeassistant
     volumes:
       - ./homeassistant:/config
