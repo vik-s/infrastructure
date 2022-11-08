@@ -15,5 +15,8 @@ tsukuyomi:
 dockermain:
 	ansible-playbook -u ansible -b run.yaml --limit dockermain --vault-password-file .vault-pass
 
+sakura:
+	ansible-playbook -u ansible -b run.yaml --limit sakura --vault-password-file .vault-pass
+
 docker-update:
 	ansible-playbook -u ansible -b docker-update.yaml --vault-password-file .vault-pass

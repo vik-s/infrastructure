@@ -1,3 +1,11 @@
+- name: Ensure necessary groups exist
+  ansible.builtin.group:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - "{{ secret_username }}"
+    - ansible
+
 - name: Add Users
   ansible.builtin.user:
     name: "{{ item.user }}"

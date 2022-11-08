@@ -72,3 +72,22 @@
   roles:
     - role: docker_alpine
     - role: docker_apps
+
+# Ubuntu Dev VM
+# -------------
+- hosts: sakura
+  become: true
+  vars_files:
+    - 'vars/vault.yaml'
+  pre_tasks:
+    - name: Apt update
+      apt:
+        upgrade: 'yes'
+        update_cache: yes
+        cache_valid_time: 3600
+  roles:
+    - role: geerlingguy.pip
+    - role: gantsign.oh-my-zsh
+      users:
+        - username: "{{ secret_username }}"
+    - role: install_ansible

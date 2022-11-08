@@ -1,0 +1,14 @@
+---
+
+# Install Ansible 
+# ----------------------------------
+
+- name: Install virtualenv
+  ansible.builtin.pip:
+    name: virtualenv
+
+- name: Install ansible
+  ansible.builtin.pip:
+    name: 
+      - ansible 
+    virtualenv: "/home/{{secret_username}}/venvs/ansible"

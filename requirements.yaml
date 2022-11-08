@@ -8,6 +8,7 @@ roles:
 - src: geerlingguy.nfs
 - src: geerlingguy.pip
 - src: geerlingguy.samba
+- src: gantsign.oh-my-zsh
 
 collections:
 - community.general
