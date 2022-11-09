@@ -678,7 +678,7 @@ services:
 
   web_recipes:
     restart: unless-stopped 
-    image: vabene1111/recipes:1.4.4
+    image: vabene1111/recipes:1.4.5
     container_name: web_recipes
     security_opt:
       - no-new-privileges:true
