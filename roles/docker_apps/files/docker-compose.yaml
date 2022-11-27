@@ -529,48 +529,6 @@ services:
       - traefik.http.routers.homer.rule=Host(`www.iyer.app`) || Host(`iyer.app`)
       - traefik.http.routers.homer.middlewares=localip@file
 
-  collabora:
-    image: collabora/code:21.11.5.3.1
-    container_name: collabora
-    security_opt:
-      - no-new-privileges:true
-    restart: unless-stopped
-    environment:
-      - "domain=cloud\\.iyer\\.app"
-    networks:
-      - traefik
-    profiles:
-      - all
-      - tools
-    cap_add:
-      - MKNOD
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.collabora.rule=Host(`collabora.iyer.app`)
-      - traefik.http.routers.homer.middlewares=localip@file
-
-  mylar3:
-    image: lscr.io/linuxserver/mylar3:0.6.9
-    container_name: mylar3
-    security_opt:
-      - no-new-privileges:true
-    restart: unless-stopped
-    environment:
-      - PUID={{ docker_userid }}
-      - PGID={{ docker_userid }}
-    networks:
-      - traefik
-    profiles:
-      - all
-      - media
-    volumes:
-      - ./mylar3:/config
-      - /mnt/storage/media:/media
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.mylar3.rule=Host(`mylar3.iyer.app`)
-      - traefik.http.routers.mylar3.middlewares=localip@file
-
   kavita:  
     image: kizaing/kavita:latest
     container_name: kavita 
@@ -637,28 +595,6 @@ services:
       - traefik.http.routers.huginn.rule=Host(`huginn.iyer.app`)
       - traefik.http.routers.huginn.middlewares=localip@file
 
-  homeassistant:
-    image: homeassistant/home-assistant:2022.11
-    container_name: homeassistant
-    volumes:
-      - ./homeassistant:/config
-      - /etc/localtime:/etc/localtime:ro
-    restart: unless-stopped
-    privileged: true
-    environment:
-      - PUID={{ docker_userid }}
-      - PGID={{ docker_userid }}
-      - TZ={{ TZ }}
-    profiles:
-      - all
-      - tools
-    network_mode: host
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.ha.rule=Host(`ha.iyer.app`)
-      - traefik.http.routers.ha.middlewares=localip@file
-      - traefik.http.services.ha.loadbalancer.server.port=8123
-
   db_recipes:
     restart: unless-stopped
     image: postgres:11-alpine
@@ -720,6 +656,27 @@ services:
     labels: 
       - traefik.enable=true
       - traefik.http.routers.recipes.rule=Host(`recipes.iyer.app`)
+
+  freshrss:
+    image: lscr.io/linuxserver/freshrss:1.20.1
+    container_name: freshrss
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - PUID={{ docker_userid }}
+      - PGID={{ docker_userid }}
+      - TZ={{ TZ }}
+    volumes:
+      - ./freshrss:/config
+    restart: unless-stopped
+    networks:
+      - traefik
+    profiles:
+      - all
+      - tools`
+    labels: 
+      - traefik.enable=true
+      - traefik.http.routers.freshrss.rule=Host(`rss.iyer.app`)
 
 networks:
   traefik:

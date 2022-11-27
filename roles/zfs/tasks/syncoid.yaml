@@ -21,7 +21,7 @@
     mode: "0755"
 
 - name: Install syncoid script to run pulls
-  ansible.builtin.copy:
+  ansible.builtin.template:
     src: files/syncoid.sh
     dest: "/opt/syncoid/syncoid"
     mode: "0755"
@@ -41,8 +41,8 @@
     masked: false
   loop: "{{ syncoid_services }}"
 
-- name: Start syncoid services
-  systemd:
-    name: "{{ item }}" 
-    state: started
-  loop: "{{ syncoid_services }}"
+    #- name: Start syncoid services
+    #systemd:
+    #name: "{{ item }}" 
+    #state: started
+    #loop: "{{ syncoid_services }}"

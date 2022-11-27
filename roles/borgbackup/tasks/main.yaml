@@ -44,7 +44,7 @@
   
 - name: Install borgmatic config file
   ansible.builtin.template:
-    src: files/config.yaml
+    src: "files/{{ borgmatic_config }}" 
     dest: /etc/borgmatic/config.yaml
     mode: 0755
     owner: root
