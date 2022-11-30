@@ -164,7 +164,7 @@ services:
       - traefik.http.routers.lidarr.middlewares=localip@file
 
   prowlarr:
-    image: ghcr.io/linuxserver/prowlarr:0.4.7-develop
+    image: ghcr.io/linuxserver/prowlarr:0.4.9-develop
     container_name: prowlarr
     security_opt: 
       - no-new-privileges:true
@@ -408,7 +408,7 @@ services:
       - traefik.http.routers.openbooks.middlewares=localip@file
 
   calibre:
-    image: lscr.io/linuxserver/calibre:6.8.0
+    image: lscr.io/linuxserver/calibre:6.9.0
     container_name: calibre
     security_opt: 
       - no-new-privileges:true
@@ -459,7 +459,7 @@ services:
       - traefik.http.routers.calibre-web.middlewares=localip@file
 
   vikunja:
-    image: vikunja/api:0.20.0
+    image: vikunja/api:0.20.1
     container_name: vikunja_api
     volumes: 
       - ./vikunja/files:/app/vikunja/files
@@ -478,7 +478,7 @@ services:
       - traefik.http.routers.vikunja-api.rule=Host(`vikunja.iyer.app`) && PathPrefix(`/api/v1`, `/dav/`, `/.well-known/`)
   
   vikunja_frontend:
-    image: vikunja/frontend:0.20.0
+    image: vikunja/frontend:0.20.1
     container_name: vikunja_frontend
     labels:
       - traefik.enable=true
@@ -512,7 +512,7 @@ services:
       - db
 
   homer:
-    image: b4bz/homer:v22.10.2
+    image: b4bz/homer:v22.11.1
     container_name: homer
     security_opt: 
       - no-new-privileges:true
@@ -614,7 +614,7 @@ services:
 
   web_recipes:
     restart: unless-stopped 
-    image: vabene1111/recipes:1.4.4
+    image: vabene1111/recipes:1.4.5
     container_name: web_recipes
     security_opt:
       - no-new-privileges:true
