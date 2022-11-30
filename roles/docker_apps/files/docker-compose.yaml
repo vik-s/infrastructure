@@ -657,26 +657,51 @@ services:
       - traefik.enable=true
       - traefik.http.routers.recipes.rule=Host(`recipes.iyer.app`)
 
-  freshrss:
-    image: lscr.io/linuxserver/freshrss:1.20.1
-    container_name: freshrss
+  miniflux:
+    image: miniflux/miniflux:2.0.40 
+    container_name: miniflux
+    depends_on:
+      - miniflux_db
+    restart: unless-stopped
     security_opt:
       - no-new-privileges:true
-    environment:
-      - PUID={{ docker_userid }}
-      - PGID={{ docker_userid }}
-      - TZ={{ TZ }}
-    volumes:
-      - ./freshrss:/config
-    restart: unless-stopped
     networks:
+      - db
       - traefik
     profiles:
       - all
       - tools`
-    labels: 
+    environment:
+      - DATABASE_URL=miniflux_postgres://{{ mf_dbuser }}:{{ mf_dbpass }}@miniflux_db/miniflux?sslmode=disable
+      - RUN_MIGRATIONS=1
+      - CREATE_ADMIN=1
+      - ADMIN_USERNAME={{ secret_username }}
+      - ADMIN_PASSWORD={{ secret_ansible_pass }}
+      - BASE_URL=https://rss.iyer.app
+    healthcheck:
+      test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
+    labels:
       - traefik.enable=true
-      - traefik.http.routers.freshrss.rule=Host(`rss.iyer.app`)
+      - traefik.http.routers.rss.rule=Host(`rss.iyer.app`)
+
+  miniflux_db:
+    image: postgres:15
+    container_name: miniflux_postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER={{ mf_dbuser }}
+      - POSTGRES_PASSWORD={{ mf_dbpass }}
+    volumes:
+      - /mnt/tank/dbs/postgres/miniflux:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "miniflux"]
+      interval: 10s
+      start_period: 30s
+    profiles:
+      - all
+      - db
+    networks:
+      - db
 
 networks:
   traefik:
