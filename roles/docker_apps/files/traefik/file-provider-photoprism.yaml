@@ -3,7 +3,6 @@ http:
     router-photoprism:
       rule: Host(`photoprism.iyer.app`)
       service: service-photoprism
-      middlewares: localip@file
   services:
     service-photoprism:
       loadBalancer:

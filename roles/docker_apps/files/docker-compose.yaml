@@ -703,6 +703,23 @@ services:
     networks:
       - db
 
+  linkding:
+    container_name: linkding
+    image: sissbruecker/linkding:1.15.1
+    volumes:    
+      - ./linkding:/etc/linkding/data
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:  
+      - traefik
+    profiles:
+      - all    
+      - tools`
+    labels:    
+      - traefik.enable=true
+      - traefik.http.routers.links.rule=Host(`links.iyer.app`)  
+
 networks:
   traefik:
     external: true
