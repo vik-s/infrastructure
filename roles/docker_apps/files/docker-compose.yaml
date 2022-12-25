@@ -164,7 +164,7 @@ services:
       - traefik.http.routers.lidarr.middlewares=localip@file
 
   prowlarr:
-    image: ghcr.io/linuxserver/prowlarr:0.4.11-develop
+    image: ghcr.io/linuxserver/prowlarr:1.0.0-develop
     container_name: prowlarr
     security_opt: 
       - no-new-privileges:true
