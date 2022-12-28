@@ -672,7 +672,7 @@ services:
       - all
       - tools`
     environment:
-      - DATABASE_URL=miniflux_postgres://{{ mf_dbuser }}:{{ mf_dbpass }}@miniflux_db/miniflux?sslmode=disable
+      - DATABASE_URL=postgres://{{ mf_dbuser }}:{{ mf_dbpass }}@miniflux_db/miniflux?sslmode=disable
       - RUN_MIGRATIONS=1
       - CREATE_ADMIN=1
       - ADMIN_USERNAME={{ secret_username }}
@@ -686,7 +686,7 @@ services:
 
   miniflux_db:
     image: postgres:15
-    container_name: miniflux_postgres
+    container_name: miniflux_db
     restart: unless-stopped
     environment:
       - POSTGRES_USER={{ mf_dbuser }}
