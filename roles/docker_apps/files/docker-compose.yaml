@@ -720,6 +720,52 @@ services:
       - traefik.enable=true
       - traefik.http.routers.links.rule=Host(`links.iyer.app`)  
 
+  firefly3:
+    image: fireflyiii/core:version-5.7
+    container_name: firefly3
+    restart: unless-stopped
+    volumes: 
+      - ./firefly3/upload:/var/www/html/storage/upload
+    environment:
+      DB_HOST: firefly_db
+      DB_DATABASE: {{ ff_dbname }}
+      DB_USERNAME: {{ ff_dbuser }}
+      DB_PASSWORD: {{ ff_dbpass }}
+      DB_CONNECTION: pgsql
+      DB_PORT: 5432
+      APP_KEY: {{ ff_appkey }}
+      APP_URL: https://firefly.iyer.app
+      TRUSTED_PROXIES: "**"
+    security_opt:
+      - no-new-privileges:true
+    networks:  
+      - traefik
+      - db
+    profiles:
+      - all    
+      - tools`
+    labels:    
+      - traefik.enable=true
+      - traefik.http.routers.firefly.rule=Host(`firefly.iyer.app`)  
+      - traefik.http.routers.firefly.middlewares=localip@file
+
+
+  firefly_db:
+    image: postgres:15
+    container_name: firefly_db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB={{ ff_dbname }}
+      - POSTGRES_USER={{ ff_dbuser }}
+      - POSTGRES_PASSWORD={{ ff_dbpass }}
+    volumes:
+      - /mnt/tank/dbs/postgres/firefly:/var/lib/postgresql/data
+    profiles:
+      - all
+      - db
+    networks:
+      - db
+
 networks:
   traefik:
     external: true
