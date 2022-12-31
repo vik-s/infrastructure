@@ -724,9 +724,12 @@ services:
     image: fireflyiii/core:version-5.7
     container_name: firefly3
     restart: unless-stopped
+    depends_on:
+      - firefly_db
     volumes: 
       - ./firefly3/upload:/var/www/html/storage/upload
     environment:
+      TZ: {{ TZ }}
       DB_HOST: firefly_db
       DB_DATABASE: {{ ff_dbname }}
       DB_USERNAME: {{ ff_dbuser }}
@@ -749,7 +752,6 @@ services:
       - traefik.http.routers.firefly.rule=Host(`firefly.iyer.app`)  
       - traefik.http.routers.firefly.middlewares=localip@file
 
-
   firefly_db:
     image: postgres:15
     container_name: firefly_db
@@ -765,6 +767,29 @@ services:
       - db
     networks:
       - db
+
+  firefly_importer:
+    image: fireflyiii/data-importer:version-0.9.17
+    container_name: firefly_importer
+    restart: unless-stopped
+    environment:
+      TZ: {{ TZ }}
+      FIREFLY_III_URL: https://firefly.iyer.app
+      VANITY_URL: https://firefly.iyer.app
+      FIREFLY_III_CLIENT_ID: 6
+      TRUSTED_PROXIES: "**"
+    depends_on:
+      - firefly3
+    networks:
+      - traefik
+      - db
+    profiles:
+      - all
+      - tools
+    labels:    
+      - traefik.enable=true
+      - traefik.http.routers.firefly-import.rule=Host(`firefly-import.iyer.app`)  
+      - traefik.http.routers.firefly-import.middlewares=localip@file
 
 networks:
   traefik:
