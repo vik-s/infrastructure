@@ -1,0 +1,13 @@
+- name: Create firefly3 configuration directory
+  file:
+    path: /opt/docker/firefly3/configuration
+    state: directory
+    owner: "{{ secret_username }}"
+    mode: "{{ docker_dir_mask }}"
+      
+- name: Install import configs
+  copy: 
+    src: files/firefly3/configuration
+    dest: /opt/docker/firefly3
+    owner: "{{ secret_username }}"
+    mode: "{{ docker_dir_mask }}"

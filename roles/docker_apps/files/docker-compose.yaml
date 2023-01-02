@@ -772,6 +772,8 @@ services:
     image: fireflyiii/data-importer:version-0.9.17
     container_name: firefly_importer
     restart: unless-stopped
+    volumes:
+      - ./firefly3/configuration:/var/www/html/storage/configurations
     environment:
       TZ: {{ TZ }}
       FIREFLY_III_URL: https://firefly.iyer.app
@@ -790,7 +792,19 @@ services:
       - traefik.enable=true
       - traefik.http.routers.firefly-import.rule=Host(`firefly-import.iyer.app`)  
       - traefik.http.routers.firefly-import.middlewares=localip@file
-
+  
+  alpine:
+    image: alpine:3.17
+    container_name: alpine
+    restart: unless-stopped
+    networks:
+      - traefik
+      - db
+    profiles:
+      - all
+      - tools
+    command: sh -c "echo \"0 3 * * * wget -qO- https://firefly.iyer.app/api/v1/cron/{{ ff_clitoken }}\" | crontab - && crond -f -L /dev/stdout"
+  
 networks:
   traefik:
     external: true

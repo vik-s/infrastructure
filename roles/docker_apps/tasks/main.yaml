@@ -18,6 +18,9 @@
 - name: Setup nextcloud
   include: nextcloud.yaml
 
+- name: Setup firefly3
+  include: firefly3.yaml
+
 - name: Install docker compose file
   template:
     src: files/docker-compose.yaml
