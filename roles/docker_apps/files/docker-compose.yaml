@@ -804,7 +804,7 @@ services:
       - all
       - tools
     command: sh -c "echo \"0 3 * * * wget -qO- https://firefly.iyer.app/api/v1/cron/{{ ff_clitoken }}\" | crontab - && crond -f -L /dev/stdout"
-  
+
 networks:
   traefik:
     external: true

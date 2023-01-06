@@ -1,0 +1,8 @@
+---
+# Aram's Backup VM
+# ----------------
+- hosts: tartarus
+  vars_files:
+    - 'vars/vault.yaml'
+  roles:
+    - role: borgbackup

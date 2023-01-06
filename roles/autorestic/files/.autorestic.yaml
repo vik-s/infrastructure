@@ -1,0 +1,55 @@
+version: 2
+
+extras:
+  creds: &creds
+    type: b2
+    env: 
+      B2_ACCOUNT_ID: '{{ secret_backblaze_account_id }}'
+      B2_ACCOUNT_KEY: '{{ secret_backblaze_account_key }}'
+    key: '{{ secret_autorestic_encryption_key }}'
+
+locations:
+  calibre:
+    from: /mnt/tank/calibre
+    to: remote-calibre
+  docker:
+    from: /rpool/docker
+    to: remote-docker
+  docker-dbs:
+    from: /mnt/tank/dbs/backups
+    to: remote-docker-dbs
+  cloud:
+    from: /mnt/tank/cloud
+    to: remote-cloud
+  zfs-vik:
+    from: /mnt/tank/cloud/vik
+    to: remote-zfs-vik
+  cloud:
+    from: /mnt/tank/cloud/sam
+    to: remote-zfs-sam
+  backups:
+    from: /mnt/tank/backups
+    to: remote-backups
+
+backends:
+  remote-calibre:
+    <<: *creds
+    path: pds-media:calibre
+  remote-backups:
+    <<: *creds
+    path: pds-media:backups
+  remote-docker:
+    <<: *creds
+    path: pds-docker:docker
+  remote-docker-dbs:
+    <<: *creds
+    path: pds-docker:docker-dbs
+  remote-cloud:
+    <<: *creds
+    path: pds-cloud:cloud
+  remote-zfs-vik:
+    <<: *creds
+    path: pds-home:zfs-vik
+  remote-zfs-sam:
+    <<: *creds
+    path: pds-home:zfs-sam

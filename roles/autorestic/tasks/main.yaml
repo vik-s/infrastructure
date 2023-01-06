@@ -1,0 +1,38 @@
+---
+- name: Install bzip2
+  ansible.builtin.package:
+    name: 
+      - bzip2
+      - restic
+
+- name: Create autorestic configuration directory
+  file:
+    path: /etc/autorestic
+    state: directory
+    owner: "{{ secret_username }}"
+    mode: "{{ docker_dir_mask }}"
+      
+- name: Install autorestic config file
+  template: 
+    src: files/.autorestic.yaml
+    dest: /etc/autorestic
+    owner: "{{ secret_username }}"
+    mode: "{{ docker_dir_mask }}"
+
+- name: Download autorestic binary
+  ansible.builtin.get_url:
+    url: "https://github.com/cupcakearmy/autorestic/releases/download/v1.7.4/autorestic_1.7.4_linux_amd64.bz2"
+    dest: /etc/autorestic/autorestic.bz2
+    mode: '0644'
+
+- name: Unarchive autorestic binary and move it to /usr/local/bin
+  ansible.builtin.shell:
+    chdir: /etc/autorestic
+    cmd: bzip2 -d autorestic.bz2 && mv autorestic /usr/local/bin
+
+- name: Set autorestic executable permissions
+  ansible.builtin.file:
+    path: /usr/local/bin/autorestic
+    owner: "{{ secret_username }}"
+    group: "{{ secret_username }}"
+    mode: '0754'

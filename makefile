@@ -18,5 +18,8 @@ dockermain:
 sakura:
 	ansible-playbook -u ansible -b run.yaml --limit sakura --vault-password-file .vault-pass
 
+tartarus:
+	ansible-playbook -u ansible -b nub.yaml --limit tartarus --vault-password-file .vault-pass
+
 docker-update:
 	ansible-playbook -u ansible -b docker-update.yaml --vault-password-file .vault-pass
