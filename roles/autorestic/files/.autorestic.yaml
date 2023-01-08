@@ -7,29 +7,49 @@ extras:
       B2_ACCOUNT_ID: '{{ secret_backblaze_account_id }}'
       B2_ACCOUNT_KEY: '{{ secret_backblaze_account_key }}'
     key: '{{ secret_autorestic_encryption_key }}'
+  options: &opts
+    forget:
+      keep-daily: 1
+      keep-weekly: 4
+      keep-monthly: 4
+      keep-yearly: 1
 
 locations:
   calibre:
     from: /mnt/tank/calibre
     to: remote-calibre
+    options:
+      <<: *opts
   docker:
     from: /rpool/docker
     to: remote-docker
+    options:
+      <<: *opts
   docker-dbs:
     from: /mnt/tank/dbs/backups
     to: remote-docker-dbs
+    options:
+      <<: *opts
   cloud:
     from: /mnt/tank/cloud
     to: remote-cloud
+    options:
+      <<: *opts
   zfs-vik:
-    from: /mnt/tank/cloud/vik
+    from: /mnt/tank/vik
     to: remote-zfs-vik
+    options:
+      <<: *opts
   cloud:
-    from: /mnt/tank/cloud/sam
+    from: /mnt/tank/sam
     to: remote-zfs-sam
+    options:
+      <<: *opts
   backups:
     from: /mnt/tank/backups
     to: remote-backups
+    options:
+      <<: *opts
 
 backends:
   remote-calibre:
