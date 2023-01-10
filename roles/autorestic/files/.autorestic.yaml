@@ -40,7 +40,7 @@ locations:
     to: remote-zfs-vik
     options:
       <<: *opts
-  cloud:
+  zfs-sam:
     from: /mnt/tank/sam
     to: remote-zfs-sam
     options:
