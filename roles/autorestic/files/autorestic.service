@@ -1,0 +1,10 @@
+[Unit]
+Description=Autorestic cron
+
+[Service]
+Environment=TZ=UTC
+Type=oneshot
+ExecStart=/etc/autorestic/autorestic
+
+[Install]
+WantedBy=timers.target

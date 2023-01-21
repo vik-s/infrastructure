@@ -18,36 +18,43 @@ locations:
   calibre:
     from: /mnt/tank/calibre
     to: remote-calibre
+    cron: '0 0 * * *'
     options:
       <<: *opts
   docker:
     from: /rpool/docker
     to: remote-docker
+    cron: '0 1 * * *'
     options:
       <<: *opts
   docker-dbs:
     from: /mnt/tank/dbs/backups
     to: remote-docker-dbs
+    cron: '0 2 * * *'
     options:
       <<: *opts
   cloud:
     from: /mnt/tank/cloud
     to: remote-cloud
+    cron: '0 3 * * *'
     options:
       <<: *opts
   zfs-vik:
     from: /mnt/tank/vik
     to: remote-zfs-vik
+    cron: '0 4 * * *'
     options:
       <<: *opts
   zfs-sam:
     from: /mnt/tank/sam
     to: remote-zfs-sam
+    cron: '0 5 * * *'
     options:
       <<: *opts
   backups:
     from: /mnt/tank/backups
     to: remote-backups
+    cron: '0 6 * * *'
     options:
       <<: *opts
 

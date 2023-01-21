@@ -24,11 +24,13 @@
     url: "https://github.com/cupcakearmy/autorestic/releases/download/v1.7.4/autorestic_1.7.4_linux_amd64.bz2"
     dest: /etc/autorestic/autorestic.bz2
     mode: '0644'
+  when: enable_download == true
 
 - name: Unarchive autorestic binary and move it to /usr/local/bin
   ansible.builtin.shell:
     chdir: /etc/autorestic
     cmd: bzip2 -d autorestic.bz2 && mv autorestic /usr/local/bin
+  when: enable_download == true
 
 - name: Set autorestic executable permissions
   ansible.builtin.file:
@@ -36,3 +38,26 @@
     owner: "{{ secret_username }}"
     group: "{{ secret_username }}"
     mode: '0754'
+  when: enable_download == true
+
+- name: Install autorestic script to run on cron
+  ansible.builtin.template:
+    src: files/autorestic.sh
+    dest: "/etc/autorestic/autorestic"
+    mode: "0755"
+    owner: "root"
+    group: "root"
+
+- name: Install autorestic systemd services
+  ansible.builtin.copy:
+    src: files/{{ item }}
+    dest: /lib/systemd/system/{{ item }}
+  loop: "{{ autorestic_services }}"
+
+- name: Enable autorestic systemd services
+  systemd:
+    name: "{{ item }}"
+    enabled: true
+    masked: false
+    daemon-reload: true
+  loop: "{{ autorestic_services }}"
