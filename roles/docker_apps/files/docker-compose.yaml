@@ -408,7 +408,7 @@ services:
       - traefik.http.routers.openbooks.middlewares=localip@file
 
   calibre:
-    image: lscr.io/linuxserver/calibre:6.11.0
+    image: lscr.io/linuxserver/calibre:6.12.0
     container_name: calibre
     security_opt: 
       - no-new-privileges:true
