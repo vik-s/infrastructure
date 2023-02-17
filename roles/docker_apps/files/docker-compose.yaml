@@ -394,7 +394,7 @@ services:
     security_opt: 
       - no-new-privileges:true
     restart: unless-stopped
-    command: --persist
+    command: --persist --name lookbooker123 --searchbot searchhook 
     networks:
       - traefik
     profiles:

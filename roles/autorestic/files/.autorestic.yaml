@@ -13,45 +13,56 @@ extras:
       keep-weekly: 4
       keep-monthly: 4
       keep-yearly: 1
+  healthchecks: &healthchecks
+    hooks:
+      success:
+        - '/usr/bin/curl -m 10 --retry 3 "{{ hcid_autorestic }}"'
 
 locations:
   calibre:
+    <<: *healthchecks
     from: /mnt/tank/calibre
     to: remote-calibre
     cron: '0 0 * * *'
     options:
       <<: *opts
   docker:
+    <<: *healthchecks
     from: /rpool/docker
     to: remote-docker
     cron: '0 1 * * *'
     options:
       <<: *opts
   docker-dbs:
+    <<: *healthchecks
     from: /mnt/tank/dbs/backups
     to: remote-docker-dbs
     cron: '0 2 * * *'
     options:
       <<: *opts
   cloud:
+    <<: *healthchecks
     from: /mnt/tank/cloud
     to: remote-cloud
     cron: '0 3 * * *'
     options:
       <<: *opts
   zfs-vik:
+    <<: *healthchecks
     from: /mnt/tank/vik
     to: remote-zfs-vik
     cron: '0 4 * * *'
     options:
       <<: *opts
   zfs-sam:
+    <<: *healthchecks
     from: /mnt/tank/sam
     to: remote-zfs-sam
     cron: '0 5 * * *'
     options:
       <<: *opts
   backups:
+    <<: *healthchecks
     from: /mnt/tank/backups
     to: remote-backups
     cron: '0 6 * * *'
