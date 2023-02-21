@@ -512,7 +512,7 @@ services:
       - db
 
   homer:
-    image: b4bz/homer:v23.02.1
+    image: b4bz/homer:v23.02.2
     container_name: homer
     security_opt: 
       - no-new-privileges:true
