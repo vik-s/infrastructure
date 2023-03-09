@@ -394,7 +394,7 @@ services:
     security_opt: 
       - no-new-privileges:true
     restart: unless-stopped
-    command: --persist --name lookbooker123 --searchbot searchhook 
+    command: --persist --name gitbk123 --useragent HexChat 2.9.1 --tls true --searchbot searchook
     networks:
       - traefik
     profiles:
