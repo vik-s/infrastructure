@@ -9,6 +9,7 @@ http:
           - 10.5.1.0/24
           - 10.7.0.0/16
           - 172.0.0.0/8
+          - 100.0.0.0/8
   serversTransports:
     ignorecert:
       insecureSkipVerify: true

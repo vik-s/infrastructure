@@ -14,6 +14,13 @@ entryPoints:
         domains:
           - main: iyer.app
             sans: "*.iyer.app"
+    forwardedHeaders:
+      trustedIPs:
+        - "127.0.0.1/32" #localhost
+        - "100.0.0.0/8" #tailscale
+        - "10.5.1.0/24" #wireguard
+        - "192.168.1.0/24" #localLAN
+        - "172.0.0.0/8" #docker
 
 providers:
   docker:
