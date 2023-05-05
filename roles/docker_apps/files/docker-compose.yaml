@@ -51,7 +51,7 @@ services:
       - traefik.http.routers.librespeed.middlewares=localip@file
 
   sabnzbd:
-    image: ghcr.io/linuxserver/sabnzbd:3.7.2
+    image: ghcr.io/linuxserver/sabnzbd:4.0.1
     container_name: sabnzbd
     security_opt: 
       - no-new-privileges:true
@@ -74,7 +74,7 @@ services:
       - traefik.http.routers.sabnzbd.middlewares=localip@file
 
   radarr:
-    image: ghcr.io/linuxserver/radarr:4.3.2
+    image: ghcr.io/linuxserver/radarr:4.4.4
     container_name: radarr
     security_opt: 
       - no-new-privileges:true
@@ -287,7 +287,7 @@ services:
     restart: unless-stopped  
   
   redis:                                                               
-    image: redis:7.0.9-alpine                                           
+    image: redis:7.0.11-alpine                                           
     container_name: redis                                              
     security_opt: 
       - no-new-privileges:true
@@ -352,7 +352,7 @@ services:
       - traefik.http.routers.photoview.middlewares=localip@file
 
   uptime-kuma:
-    image: louislam/uptime-kuma:1.20.2-alpine
+    image: louislam/uptime-kuma:1.21.0-alpine
     container_name: uptime-kuma
     security_opt: 
       - no-new-privileges:true
@@ -459,7 +459,7 @@ services:
       - traefik.http.routers.calibre-web.middlewares=localip@file
 
   vikunja:
-    image: vikunja/api:0.20.2
+    image: vikunja/api:0.20.4
     container_name: vikunja_api
     volumes: 
       - ./vikunja/files:/app/vikunja/files
@@ -478,7 +478,7 @@ services:
       - traefik.http.routers.vikunja-api.rule=Host(`vikunja.iyer.app`) && PathPrefix(`/api/v1`, `/dav/`, `/.well-known/`)
   
   vikunja_frontend:
-    image: vikunja/frontend:0.20.3
+    image: vikunja/frontend:0.20.5
     container_name: vikunja_frontend
     labels:
       - traefik.enable=true
@@ -614,7 +614,7 @@ services:
 
   web_recipes:
     restart: unless-stopped 
-    image: vabene1111/recipes:1.4.7
+    image: vabene1111/recipes:1.4.9
     container_name: web_recipes
     security_opt:
       - no-new-privileges:true
@@ -658,7 +658,7 @@ services:
       - traefik.http.routers.recipes.rule=Host(`recipes.iyer.app`)
 
   miniflux:
-    image: miniflux/miniflux:2.0.42 
+    image: miniflux/miniflux:2.0.43 
     container_name: miniflux
     depends_on:
       - miniflux_db
