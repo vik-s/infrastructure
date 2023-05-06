@@ -658,7 +658,7 @@ services:
       - traefik.http.routers.recipes.rule=Host(`recipes.iyer.app`)
 
   miniflux:
-    image: miniflux/miniflux:2.0.43 
+    image: miniflux/miniflux:2.0.44 
     container_name: miniflux
     depends_on:
       - miniflux_db
