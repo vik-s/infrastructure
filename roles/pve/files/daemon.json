@@ -1,4 +1,4 @@
 {
     "storage-driver": "zfs",
-    "graph": "/rpool/docker"
+    "data-root": "/rpool/docker"
 }
