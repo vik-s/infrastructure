@@ -2,7 +2,9 @@
 Description=Autorestic cron
 
 [Service]
-Environment=TZ=UTC
+User=root
+Group=root
+Environment=TZ=Los_Angeles
 Type=oneshot
 ExecStart=/etc/autorestic/autorestic
 

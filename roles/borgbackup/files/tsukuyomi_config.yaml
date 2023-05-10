@@ -16,8 +16,7 @@ location:
     # is used, then add local repository paths in the systemd
     # service file to the ReadWritePaths list.
     repositories:
-      # - {{ remote1_server }}
-        - /mnt/borgdrive/tank
+      - {{ remote1_server }}
 
     # Stay in same file system (do not cross mount points).
     # Defaults to false. But when a database hook is used, the
@@ -60,7 +59,7 @@ location:
     # local_path: borg1
 
     # Alternate Borg remote executable. Defaults to "borg".
-    # remote_path: borg1
+    remote_path: '{{ app_env }}/bin/borg'
 
     # Any paths matching these patterns are included/excluded from
     # backups. Globs are expanded. (Tildes are not.) Note that
@@ -207,7 +206,7 @@ storage:
 
     # Bypass Borg error about a repository that has been moved.
     # Defaults to false.
-    # relocated_repo_access_is_ok: true
+    relocated_repo_access_is_ok: true
 
     # Bypass Borg error about a previously unknown unencrypted
     # repository. Defaults to false.

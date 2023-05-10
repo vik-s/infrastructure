@@ -62,10 +62,10 @@
     executable: /bin/bash
   register: borg_validation
   
-- name: Init borgmatic repo if it does not exist
-  ansible.builtin.shell:
-    cmd: source /etc/profile.d/borg-path.sh && borgmatic init --encryption repokey
-    executable: /bin/bash
+  #- name: Init borgmatic repo if it does not exist
+  #ansible.builtin.shell:
+  #cmd: source /etc/profile.d/borg-path.sh && borgmatic init --encryption repokey
+  #executable: /bin/bash
 
 # TODO: add restore backup
 
