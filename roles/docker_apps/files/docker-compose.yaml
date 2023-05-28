@@ -186,7 +186,7 @@ services:
       - traefik.http.routers.prowlarr.middlewares=localip@file
   
   vaultwarden:
-    image: vaultwarden/server:1.27.0-alpine
+    image: vaultwarden/server:1.28.1-alpine
     container_name: vaultwarden
     security_opt: 
       - no-new-privileges:true
