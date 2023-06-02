@@ -164,7 +164,7 @@ services:
       - traefik.http.routers.lidarr.middlewares=localip@file
 
   prowlarr:
-    image: ghcr.io/linuxserver/prowlarr:1.2.0-develop
+    image: ghcr.io/linuxserver/prowlarr:1.5.1-develop
     container_name: prowlarr
     security_opt: 
       - no-new-privileges:true
@@ -186,7 +186,7 @@ services:
       - traefik.http.routers.prowlarr.middlewares=localip@file
   
   vaultwarden:
-    image: vaultwarden/server:1.27.0-alpine
+    image: vaultwarden/server:1.28.1-alpine
     container_name: vaultwarden
     security_opt: 
       - no-new-privileges:true
@@ -352,7 +352,7 @@ services:
       - traefik.http.routers.photoview.middlewares=localip@file
 
   uptime-kuma:
-    image: louislam/uptime-kuma:1.21.0-alpine
+    image: louislam/uptime-kuma:1.21.3-alpine
     container_name: uptime-kuma
     security_opt: 
       - no-new-privileges:true
@@ -408,7 +408,7 @@ services:
       - traefik.http.routers.openbooks.middlewares=localip@file
 
   calibre:
-    image: lscr.io/linuxserver/calibre:6.13.0
+    image: lscr.io/linuxserver/calibre:6.19.1
     container_name: calibre
     security_opt: 
       - no-new-privileges:true
@@ -435,7 +435,7 @@ services:
       - traefik.http.routers.calibre.middlewares=localip@file
 
   calibre-web:
-    image: linuxserver/calibre-web:0.6.19
+    image: linuxserver/calibre-web:0.6.20
     container_name: calibre-web
     security_opt: 
       - no-new-privileges:true
@@ -614,7 +614,7 @@ services:
 
   web_recipes:
     restart: unless-stopped 
-    image: vabene1111/recipes:1.4.9
+    image: vabene1111/recipes:1.4.12
     container_name: web_recipes
     security_opt:
       - no-new-privileges:true
@@ -658,7 +658,7 @@ services:
       - traefik.http.routers.recipes.rule=Host(`recipes.iyer.app`)
 
   miniflux:
-    image: miniflux/miniflux:2.0.43 
+    image: miniflux/miniflux:2.0.44 
     container_name: miniflux
     depends_on:
       - miniflux_db
@@ -794,7 +794,7 @@ services:
       - traefik.http.routers.firefly-import.middlewares=localip@file
   
   alpine:
-    image: alpine:3.17
+    image: alpine:3.18
     container_name: alpine
     restart: unless-stopped
     networks:
