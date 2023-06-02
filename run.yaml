@@ -38,6 +38,8 @@
     - role: pve 
     - role: zfs
     - role: autorestic
+    - role: scrutiny_collector
+      collector_config: 'gaara_config'
 
 # Backup Proxmox Host
 # -----------------
@@ -66,6 +68,9 @@
   roles:
     - role: zfs
     - role: borgbackup
+    - role: geerlingguy.docker
+    - role: scrutiny_collector
+      collector_config: 'tsukuyomi_config'
 
 # Main docker host
 # ----------------

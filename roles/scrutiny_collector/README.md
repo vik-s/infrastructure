@@ -1,0 +1,1 @@
+This role sets up a scrutiny collector and can be used on multiple systems to collect hard drive health metrics and SMART data. The metrics are then collected and delivered to the scrutiny web running on the docker host.

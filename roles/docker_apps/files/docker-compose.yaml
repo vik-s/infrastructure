@@ -817,6 +817,50 @@ services:
       - traefik.enable=true
       - traefik.http.routers.whoami.rule=Host(`whoami.iyer.app`)  
 
+  scrutiny-influxdb:
+    image: influxdb:2.2
+    container_name: scrutiny-influxdb
+    restart: unless-stopped
+    networks:
+      - db 
+    profiles:
+      - all
+      - db
+    volumes:
+      - './scrutiny/influxdb:/var/lib/influxdb2'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+
+  scrutiny-web:
+    image: 'ghcr.io/analogj/scrutiny:master-web'
+    container_name: scrutiny-web
+    restart: unless-stopped
+    networks:
+      - traefik
+      - db
+    profiles:
+      - all
+      - tools
+    volumes:
+      - './scrutiny/config:/opt/scrutiny/config'
+    environment:
+      SCRUTINY_WEB_INFLUXDB_HOST: 'scrutiny-influxdb'
+    depends_on:
+      scrutiny-influxdb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+      start_period: 10s
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.scrutiny.rule=Host(`scrutiny.iyer.app`)
+
 networks:
   traefik:
     external: true

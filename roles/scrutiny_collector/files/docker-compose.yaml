@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  scrutiny-collector:
+    image: 'ghcr.io/analogj/scrutiny:master-collector'
+    container_name: scrutiny-collector
+    cap_add:
+      - SYS_RAWIO
+      - SYS_ADMIN # needed for NVMe drives
+    environment:
+      - COLLECTOR_RUN_STARTUP=true
+      - COLLECTOR_RUN_STARTUP_SLEEP=10
+        # - DEBUG=true
+        # - COLLECTOR_LOG_FILE='/opt/docker/scrutiny-collector/collector.log'
+    volumes:
+      - '/opt/docker/scrutiny-collector/{{ collector_config }}:/opt/scrutiny/config/'
+      - '/run/udev:/run/udev:ro'
+    restart: unless-stopped
+    devices:
+      - /dev/sda:/dev/sda
+      - /dev/sdb:/dev/sdb
+      - /dev/sdc:/dev/sdc
+      - /dev/sdd:/dev/sdd
+      - /dev/sde:/dev/sde
+      - /dev/sdf:/dev/sdf

@@ -1,0 +1,22 @@
+- name: Create /opt/docker/scrutiny-collector if it does not exist
+  ansible.builtin.file:
+    path: /opt/docker/scrutiny-collector
+    state: directory
+    mode: 0775
+
+- name: Install scrutiny collector docker compose file
+  template:
+    src: files/docker-compose.yaml
+    dest: /opt/docker/scrutiny-collector/docker-compose.yaml
+    mode: "{{ docker_file_mask }}"
+    owner: "{{ secret_username }}"
+    validate: docker-compose -f %s config
+
+- name: Copy the collector configuration file
+  ansible.builtin.copy:
+    src: files/{{ collector_config }}
+    dest: /opt/docker/scrutiny-collector
+    mode: 0775
+    owner: "{{ secret_username }}"
+    group: "{{ secret_username }}"
+

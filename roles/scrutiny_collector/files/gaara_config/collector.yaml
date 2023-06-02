@@ -1,0 +1,23 @@
+# For all possible options, see  https://github.com/AnalogJ/scrutiny/blob/master/example.collector.yaml
+
+version: 1
+
+host:
+  id: "gaara"
+
+api:
+  endpoint: 'https://scrutiny.iyer.app'
+
+devices:
+  - device: /dev/sda
+    type: 'auto'
+  - device: /dev/sdb
+    type: 'auto'
+  - device: /dev/sdc
+    type: 'auto'
+  - device: /dev/sdd
+    type: 'auto'
+  - device: /dev/sde
+    type: 'auto'
+  - device: /dev/sdf
+    type: 'auto'
