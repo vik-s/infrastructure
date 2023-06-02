@@ -74,7 +74,7 @@ services:
       - traefik.http.routers.sabnzbd.middlewares=localip@file
 
   radarr:
-    image: ghcr.io/linuxserver/radarr:4.4.4
+    image: ghcr.io/linuxserver/radarr:4.5.2
     container_name: radarr
     security_opt: 
       - no-new-privileges:true
