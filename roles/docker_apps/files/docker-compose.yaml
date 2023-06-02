@@ -818,7 +818,7 @@ services:
       - traefik.http.routers.whoami.rule=Host(`whoami.iyer.app`)  
 
   scrutiny-influxdb:
-    image: influxdb:2.2
+    image: influxdb:2.7
     container_name: scrutiny-influxdb
     restart: unless-stopped
     networks:
