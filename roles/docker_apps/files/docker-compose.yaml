@@ -120,7 +120,7 @@ services:
       - traefik.http.routers.sonarr.middlewares=localip@file
 
   overseerr:
-    image: sctx/overseerr:1.32.5
+    image: sctx/overseerr:1.33.0
     container_name: overseerr
     security_opt: 
       - no-new-privileges:true
