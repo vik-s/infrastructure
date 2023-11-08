@@ -120,7 +120,11 @@ services:
       - traefik.http.routers.sonarr.middlewares=localip@file
 
   overseerr:
+<<<<<<< Updated upstream
     image: sctx/overseerr:1.33.2
+=======
+    image: sctx/overseerr:1.32.5
+>>>>>>> Stashed changes
     container_name: overseerr
     security_opt: 
       - no-new-privileges:true
@@ -214,7 +218,6 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.bitwarden.rule=Host(`bitwarden.iyer.app`)
-      - traefik.http.routers.bitwarden.middlewares=localip@file
 
   vaultwarden_db:
     image: mariadb:10.9
@@ -721,7 +724,7 @@ services:
       - traefik.http.routers.links.rule=Host(`links.iyer.app`)  
 
   firefly3:
-    image: fireflyiii/core:version-5.7
+    image: fireflyiii/core:version-6.0.11
     container_name: firefly3
     restart: unless-stopped
     depends_on:
