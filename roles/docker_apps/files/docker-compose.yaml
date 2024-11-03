@@ -51,7 +51,7 @@ services:
       - traefik.http.routers.librespeed.middlewares=localip@file
 
   sabnzbd:
-    image: ghcr.io/linuxserver/sabnzbd:4.0.1
+    image: ghcr.io/linuxserver/sabnzbd:4.3.3
     container_name: sabnzbd
     security_opt: 
       - no-new-privileges:true
