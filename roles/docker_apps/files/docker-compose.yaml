@@ -120,11 +120,7 @@ services:
       - traefik.http.routers.sonarr.middlewares=localip@file
 
   overseerr:
-<<<<<<< Updated upstream
     image: sctx/overseerr:1.33.2
-=======
-    image: sctx/overseerr:1.32.5
->>>>>>> Stashed changes
     container_name: overseerr
     security_opt: 
       - no-new-privileges:true
