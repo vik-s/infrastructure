@@ -29,7 +29,7 @@ services:
       - traefik.http.services.dashboard.loadbalancer.server.port=80"
 
   librespeed:
-    image: lscr.io/linuxserver/librespeed:5.2.5
+    image: lscr.io/linuxserver/librespeed:5.4.1
     container_name: librespeed 
     security_opt: 
       - no-new-privileges:true
@@ -51,7 +51,7 @@ services:
       - traefik.http.routers.librespeed.middlewares=localip@file
 
   sabnzbd:
-    image: ghcr.io/linuxserver/sabnzbd:4.0.1
+    image: ghcr.io/linuxserver/sabnzbd:4.3.3
     container_name: sabnzbd
     security_opt: 
       - no-new-privileges:true
@@ -74,7 +74,7 @@ services:
       - traefik.http.routers.sabnzbd.middlewares=localip@file
 
   radarr:
-    image: ghcr.io/linuxserver/radarr:4.6.4
+    image: ghcr.io/linuxserver/radarr:5.14.0
     container_name: radarr
     security_opt: 
       - no-new-privileges:true
@@ -97,7 +97,7 @@ services:
       - traefik.http.routers.radarr.middlewares=localip@file
 
   sonarr:
-    image: ghcr.io/linuxserver/sonarr:3.0.10
+    image: ghcr.io/linuxserver/sonarr:4.0.10
     container_name: sonarr
     security_opt: 
       - no-new-privileges:true
@@ -141,7 +141,7 @@ services:
       - traefik.http.routers.overseerr.middlewares=localip@file
 
   lidarr:
-    image: lscr.io/linuxserver/lidarr:0.8.1
+    image: lscr.io/linuxserver/lidarr:2.7.1
     container_name: lidarr
     security_opt: 
       - no-new-privileges:true
@@ -164,7 +164,7 @@ services:
       - traefik.http.routers.lidarr.middlewares=localip@file
 
   prowlarr:
-    image: ghcr.io/linuxserver/prowlarr:1.5.1-develop
+    image: ghcr.io/linuxserver/prowlarr:1.25.4
     container_name: prowlarr
     security_opt: 
       - no-new-privileges:true
@@ -351,7 +351,7 @@ services:
       - traefik.http.routers.photoview.middlewares=localip@file
 
   uptime-kuma:
-    image: louislam/uptime-kuma:1.23.0-alpine
+    image: louislam/uptime-kuma:1.23.15-alpine
     container_name: uptime-kuma
     security_opt: 
       - no-new-privileges:true
@@ -374,8 +374,6 @@ services:
     security_opt: 
       - no-new-privileges:true
     restart: unless-stopped
-    security_opt: 
-      - no-new-privileges:true
     networks:
       - db
     profiles:
@@ -407,7 +405,7 @@ services:
       - traefik.http.routers.openbooks.middlewares=localip@file
 
   calibre:
-    image: lscr.io/linuxserver/calibre:6.25.0
+    image: lscr.io/linuxserver/calibre:7.20.0
     container_name: calibre
     security_opt: 
       - no-new-privileges:true
@@ -457,96 +455,6 @@ services:
       - traefik.http.routers.calibre-web.rule=Host(`calibre-web.iyer.app`)
       - traefik.http.routers.calibre-web.middlewares=localip@file
 
-  vikunja:
-    image: vikunja/api:0.21.0
-    container_name: vikunja_api
-    volumes: 
-      - ./vikunja/files:/app/vikunja/files
-      - ./vikunja/config.yaml:/app/vikunja/config.yaml
-    networks:
-      - traefik
-      - db
-    profiles:
-      - all
-      - tools 
-    depends_on:
-      - vikunja_db
-    restart: unless-stopped
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.vikunja-api.rule=Host(`vikunja.iyer.app`) && PathPrefix(`/api/v1`, `/dav/`, `/.well-known/`)
-  
-  vikunja_frontend:
-    image: vikunja/frontend:0.21.0
-    container_name: vikunja_frontend
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.vikunja-frontend.rule=Host(`vikunja.iyer.app`)
-    networks:
-      - traefik
-      - db
-    profiles:
-      - all
-      - tools 
-    restart: unless-stopped
-  
-  vikunja_db:
-    image: mariadb:10.9
-    container_name: vikunja_db
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-    environment:
-      MYSQL_ROOT_PASSWORD: vikunja 
-      MYSQL_USER: vikunja
-      MYSQL_PASSWORD: vikunja
-      MYSQL_DATABASE: vikunja
-    volumes:
-      - /mnt/tank/dbs/mariadb/vikunja:/var/lib/mysql
-    restart: unless-stopped
-    command: --max-connections=1000
-    profiles:
-      - all
-      - tools 
-      - db
-    networks:
-      - db
-
-  homer:
-    image: b4bz/homer:v23.05.1
-    container_name: homer
-    security_opt: 
-      - no-new-privileges:true
-    volumes:
-      - ./homer:/www/assets
-    restart: unless-stopped
-    networks:
-      - traefik
-    profiles:
-      - all
-      - tools 
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.homer.rule=Host(`www.iyer.app`) || Host(`iyer.app`)
-      - traefik.http.routers.homer.middlewares=localip@file
-
-  kavita:  
-    image: kizaing/kavita:latest
-    container_name: kavita 
-    security_opt:
-      - no-new-privileges:true
-    networks:
-      - traefik
-    profiles:
-      - all
-      - media
-    volumes:
-      - /mnt/storage/media/library/comics:/comics
-      - ./kavita:/kavita/config
-    restart: unless-stopped
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.kavita.rule=Host(`kavita.iyer.app`)
-      - traefik.http.routers.kavita.middlewares=localip@file
-
   huggin_db:
     image: mariadb:10.9
     container_name: huggin_db
@@ -567,7 +475,7 @@ services:
       - db
 
   huggin:
-    image: huginn/huginn:68b759a3f0874507d1871cf5c4700950579818d9
+    image: huginn/huginn:latest
     container_name: huggin
     security_opt:
       - no-new-privileges:true
@@ -613,7 +521,7 @@ services:
 
   web_recipes:
     restart: unless-stopped 
-    image: vabene1111/recipes:1.5.3
+    image: vabene1111/recipes:1.5.20
     container_name: web_recipes
     security_opt:
       - no-new-privileges:true
@@ -657,7 +565,7 @@ services:
       - traefik.http.routers.recipes.rule=Host(`recipes.iyer.app`)
 
   miniflux:
-    image: miniflux/miniflux:2.0.47 
+    image: miniflux/miniflux:2.2.2
     container_name: miniflux
     depends_on:
       - miniflux_db
@@ -704,7 +612,7 @@ services:
 
   linkding:
     container_name: linkding
-    image: sissbruecker/linkding:1.21.0
+    image: sissbruecker/linkding:1.36.0
     volumes:    
       - ./linkding:/etc/linkding/data
     restart: unless-stopped
