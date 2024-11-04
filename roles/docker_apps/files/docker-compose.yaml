@@ -319,7 +319,7 @@ services:
       - /mnt/tank/dbs/mariadb/photoview:/var/lib/mysql
 
   photoview:
-    image: viktorstrate/photoview:2.3.13
+    image: viktorstrate/photoview:2.4.0
     container_name: photoview
     security_opt: 
       - no-new-privileges:true
