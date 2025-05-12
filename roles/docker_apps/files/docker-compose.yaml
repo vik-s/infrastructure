@@ -432,7 +432,7 @@ services:
       - traefik.http.routers.calibre.middlewares=localip@file
 
   calibre-web:
-    image: linuxserver/calibre-web:0.6.23
+    image: linuxserver/calibre-web:0.6.24
     container_name: calibre-web
     security_opt: 
       - no-new-privileges:true
