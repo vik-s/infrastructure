@@ -701,7 +701,7 @@ services:
       - traefik.http.routers.firefly-import.middlewares=localip@file
   
   alpine:
-    image: alpine:3.18
+    image: alpine:3.21
     container_name: alpine
     restart: unless-stopped
     networks:
