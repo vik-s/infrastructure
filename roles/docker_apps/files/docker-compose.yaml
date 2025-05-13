@@ -141,7 +141,7 @@ services:
       - traefik.http.routers.overseerr.middlewares=localip@file
 
   lidarr:
-    image: lscr.io/linuxserver/lidarr:2.7.1
+    image: lscr.io/linuxserver/lidarr:2.11.2
     container_name: lidarr
     security_opt: 
       - no-new-privileges:true
