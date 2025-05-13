@@ -286,7 +286,7 @@ services:
     restart: unless-stopped  
   
   redis:                                                               
-    image: redis:7.0.11-alpine                                           
+    image: redis:7.4.3-alpine                                           
     container_name: redis                                              
     security_opt: 
       - no-new-privileges:true
