@@ -8,6 +8,9 @@
   "gateway": {
     "bind": "lan",
     "trustedProxies": ["172.24.0.0/16"],
+    "controlUi": {
+      "allowedOrigins": ["https://openclaw.iyer.app"]
+    },
     "auth": {
       "mode": "token",
       "token": "{{ secret_openclaw_token }}"
