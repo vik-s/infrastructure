@@ -9,10 +9,8 @@
     "bind": "lan",
     "trustedProxies": ["172.24.0.0/16"],
     "auth": {
-      "mode": "trusted-proxy",
-      "trustedProxy": {
-        "userHeader": "x-forwarded-user"
-      }
+      "mode": "token",
+      "token": "{{ secret_openclaw_token }}"
     }
   },
   "meta": {

@@ -6,7 +6,7 @@
     owner: "{{ secret_username }}"
 
 - name: Install openclaw config
-  copy:
+  template:
     src: files/openclaw/openclaw.json
     dest: /opt/docker/openclaw/config/openclaw.json
     mode: "0600"
