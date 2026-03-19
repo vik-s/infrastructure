@@ -1,0 +1,14 @@
+- name: Create openclaw config directory
+  file:
+    path: /opt/docker/openclaw/config
+    state: directory
+    mode: "{{ docker_dir_mask }}"
+    owner: "{{ secret_username }}"
+
+- name: Install openclaw config
+  copy:
+    src: files/openclaw/openclaw.json
+    dest: /opt/docker/openclaw/config/openclaw.json
+    mode: "0600"
+    owner: "1000"
+    group: "1000"

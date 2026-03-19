@@ -21,6 +21,9 @@
 - name: Setup firefly3
   include: firefly3.yaml
 
+- name: Setup openclaw
+  include: openclaw.yaml
+
 - name: Install docker compose file
   template:
     src: files/docker-compose.yaml

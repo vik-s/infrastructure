@@ -721,8 +721,8 @@ services:
     environment:
       - OPENCLAW_GATEWAY_BIND=lan
     volumes:
-      - /opt/docker/openclaw/config:/root/.openclaw
-      - /opt/docker/openclaw/workspace:/root/workspace
+      - /opt/docker/openclaw/config:/home/node/.openclaw
+      - /opt/docker/openclaw/workspace:/home/node/workspace
     networks:
       - traefik
     profiles:
