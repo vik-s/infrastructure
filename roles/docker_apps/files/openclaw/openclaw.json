@@ -11,10 +11,6 @@
     "controlUi": {
       "allowedOrigins": ["https://openclaw.iyer.app"]
     },
-    "pairing": {
-      "autoApprove": true,
-      "allowFrom": ["192.168.1.0/24", "172.24.0.0/16"]
-    },
     "auth": {
       "mode": "token",
       "token": "{{ secret_openclaw_token }}"
