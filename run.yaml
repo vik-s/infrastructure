@@ -81,19 +81,6 @@
     - role: docker_alpine
     - role: docker_apps
 
-# OpenClaw and AI agents
-# ----------------------
-- hosts: rocklee
-  become: true
-  vars_files:
-    - 'vars/vault.yaml'
-  pre_tasks:
-    - name: Apt update
-      apt:
-        upgrade: 'yes'
-        update_cache: yes
-        cache_valid_time: 3600
-
 # Ubuntu Dev VM
 # -------------
 - hosts: sakura

@@ -712,6 +712,26 @@ services:
       - tools
     command: sh -c "echo \"0 3 * * * wget -qO- https://firefly.iyer.app/api/v1/cron/{{ ff_clitoken }}\" | crontab - && crond -f -L /dev/stdout"
 
+  openclaw:
+    image: ghcr.io/openclaw/openclaw:latest
+    container_name: openclaw
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - /opt/docker/openclaw/config:/root/.openclaw
+      - /opt/docker/openclaw/workspace:/root/workspace
+    networks:
+      - traefik
+    profiles:
+      - all
+      - tools
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.openclaw.rule=Host(`openclaw.iyer.app`)
+      - traefik.http.services.openclaw-service.loadbalancer.server.port=3000
+      - traefik.http.routers.openclaw.middlewares=localip@file
+
   whoami:
     image: traefik/whoami:latest
     container_name: whoami
