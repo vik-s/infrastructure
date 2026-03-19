@@ -19,6 +19,7 @@
   command: pveam download local {{ item }}
   with_items:
     - alpine-3.14-default_20210623_amd64.tar.xz
+    - ubuntu-22.04-standard_22.04-1_amd64.tar.zst
 
 # create kakashi (docker host)
 
@@ -57,6 +58,70 @@
       - fuse=1
   with_items:
     - "{{ lxc_mnts }}"
+
+# create rocklee (Ubuntu LXC for OpenClaw and AI agents)
+
+- name: Create rocklee LXC
+  proxmox:
+    proxmox_default_behavior: no_defaults
+    vmid: 104
+    hostname: rocklee
+    unprivileged: true
+    onboot: true
+    state: present
+    node: gaara
+    storage: local-zfs
+    disk: 32
+    cpus: '1'
+    cpuunits: '1024'
+    cores: 4
+    memory: 8192
+    swap: 512
+    api_user: root@pam
+    api_host: localhost
+    api_password: "{{ secret_ansible_pass }}"
+    pubkey: "{{ secret_ansible_sshkey }}"
+    password: "{{ secret_ansible_pass }}"
+    ostemplate: 'local:vztmpl/ubuntu-22.04-standard_22.04-1_amd64.tar.zst'
+    netif: '{"net0":"name=eth0,gw=192.168.1.1,ip=192.168.1.63/24,bridge=vmbr0"}'
+    mounts: '{"mp0":"/rpool/docker,mp=/opt/docker,backup=0",
+              "mp1":"/mnt/storage,mp=/mnt/storage,backup=0",
+              "mp2":"/mnt/tank/cloud,mp=/mnt/tank/cloud,backup=0",
+              "mp3":"/mnt/tank/dbs,mp=/mnt/tank/dbs,backup=0",
+              "mp4":"/mnt/tank/cache,mp=/mnt/tank/cache,backup=0"}'
+    description: created with ansible
+    features:
+      - nesting=1
+      - keyctl=1
+      - fuse=1
+
+- name: Unconfine apparmor for rocklee
+  ansible.builtin.lineinfile:
+    dest: /etc/pve/lxc/104.conf
+    line: "lxc.apparmor.profile: unconfined"
+    owner: root
+
+- name: Allow rocklee to access devices
+  ansible.builtin.lineinfile:
+    dest: /etc/pve/lxc/104.conf
+    line: "lxc.cgroup.devices.allow: a"
+    owner: root
+
+- name: Drop capability for rocklee
+  ansible.builtin.lineinfile:
+    dest: /etc/pve/lxc/104.conf
+    line: "lxc.cap.drop:"
+    owner: root
+
+- name: Start rocklee
+  proxmox:
+    proxmox_default_behavior: no_defaults
+    vmid: 104
+    api_user: root@pam
+    api_host: localhost
+    api_password: "{{ secret_ansible_pass }}"
+    state: started
+    timeout: 90
 
 # ------ This block is only needed for----
 # -------Alpine and Ubuntu LXCs ----------
