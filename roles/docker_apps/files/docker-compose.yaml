@@ -731,7 +731,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.openclaw.rule=Host(`openclaw.iyer.app`)
-      - traefik.http.services.openclaw-service.loadbalancer.server.port=18789
+      - traefik.http.services.openclaw-docker.loadbalancer.server.port=18789
       - traefik.http.routers.openclaw.middlewares=localip@file
 
   whoami:
