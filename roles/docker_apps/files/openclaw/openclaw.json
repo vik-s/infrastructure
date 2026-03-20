@@ -12,7 +12,8 @@
       "allowedOrigins": ["https://openclaw.iyer.app"]
     },
     "auth": {
-      "mode": "trusted-proxy"
+      "mode": "trusted-proxy",
+      "trustedProxy": { "userHeader": "x-forwarded-user" }
     }
   },
   "meta": {
