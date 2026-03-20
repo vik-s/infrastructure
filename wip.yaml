@@ -1,0 +1,15 @@
+---
+
+- hosts: dockermain
+  vars_files:
+    - 'vars/vault.yaml'
+  tasks:
+    - name: Setup openclaw
+      include_tasks: roles/docker_apps/tasks/openclaw.yaml
+
+    - name: Install docker compose file
+      template:
+        src: roles/docker_apps/files/docker-compose.yaml
+        dest: /opt/docker/docker-compose.yaml
+        mode: "{{ docker_file_mask }}"
+        owner: "{{ secret_username }}"
