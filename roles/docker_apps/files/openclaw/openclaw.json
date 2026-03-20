@@ -6,13 +6,13 @@
     "ownerDisplay": "raw"
   },
   "gateway": {
-    "bind": "0.0.0.0",
+    "bind": "lan",
     "trustedProxies": ["172.24.0.0/16"],
     "controlUi": {
       "allowedOrigins": ["https://openclaw.iyer.app"]
     },
     "auth": {
-      "mode": "none"
+      "mode": "trusted-proxy"
     }
   },
   "meta": {
