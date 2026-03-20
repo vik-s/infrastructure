@@ -6,7 +6,7 @@
     "ownerDisplay": "raw"
   },
   "gateway": {
-    "bind": "lan",
+    "bind": "0.0.0.0",
     "trustedProxies": ["172.24.0.0/16"],
     "controlUi": {
       "allowedOrigins": ["https://openclaw.iyer.app"]
