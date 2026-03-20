@@ -3,6 +3,7 @@
 - hosts: dockermain
   vars_files:
     - 'vars/vault.yaml'
+    - 'roles/docker_apps/vars/main.yaml'
   tasks:
     - name: Create openclaw config directory
       file:
