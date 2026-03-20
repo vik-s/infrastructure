@@ -12,8 +12,7 @@
       "allowedOrigins": ["https://openclaw.iyer.app"]
     },
     "auth": {
-      "mode": "token",
-      "token": "{{ secret_openclaw_token }}"
+      "mode": "none"
     }
   },
   "meta": {
