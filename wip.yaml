@@ -4,8 +4,20 @@
   vars_files:
     - 'vars/vault.yaml'
   tasks:
-    - name: Setup openclaw
-      include_tasks: roles/docker_apps/tasks/openclaw.yaml
+    - name: Create openclaw config directory
+      file:
+        path: /opt/docker/openclaw/config
+        state: directory
+        mode: "{{ docker_dir_mask }}"
+        owner: "{{ secret_username }}"
+
+    - name: Install openclaw config
+      template:
+        src: roles/docker_apps/files/openclaw/openclaw.json
+        dest: /opt/docker/openclaw/config/openclaw.json
+        mode: "0600"
+        owner: "1000"
+        group: "1000"
 
     - name: Install docker compose file
       template:
