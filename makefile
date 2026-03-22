@@ -18,8 +18,8 @@ dockermain:
 sakura:
 	ansible-playbook -u ansible -b run.yaml --limit sakura --vault-password-file .vault-pass
 
-claude:
-	ansible-playbook -u ansible -b run.yaml --limit claude --vault-password-file .vault-pass
+clawd:
+	ansible-playbook -u ansible -b run.yaml --limit clawd --vault-password-file .vault-pass
 
 tartarus:
 	ansible-playbook -u ansible -b nub.yaml --limit tartarus --vault-password-file .vault-pass

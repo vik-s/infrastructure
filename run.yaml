@@ -83,7 +83,7 @@
 
 # Claude session host
 # -------------------
-- hosts: claude
+- hosts: clawd
   vars_files:
     - 'vars/vault.yaml'
   roles:

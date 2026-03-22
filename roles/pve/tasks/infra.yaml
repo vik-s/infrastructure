@@ -60,11 +60,11 @@
 
 # Create claude container (separate mounts)
 
-- name: Create claude LXC
+- name: Create clawd LXC
   proxmox:
     proxmox_default_behavior: no_defaults
     vmid: 104
-    hostname: claude
+    hostname: clawd
     unprivileged: true
     onboot: true
     state: present
@@ -73,16 +73,16 @@
     disk: 20
     cpus: '1'
     cpuunits: '1024'
-    cores: 2
+    cores: 4
     memory: 4096
-    swap: '512'
+    swap: '1024'
     api_user: root@pam
     api_host: localhost
     api_password: "{{ secret_ansible_pass }}"
     pubkey: "{{ secret_ansible_sshkey }}"
     password: "{{ secret_ansible_pass }}"
     ostemplate: 'local:vztmpl/alpine-3.14-default_20210623_amd64.tar.xz'
-    netif: '{"net0":"name=eth0,gw=192.168.1.1,ip=192.168.1.63/24,bridge=vmbr0"}'
+    netif: '{"net0":"name=eth0,gw=192.168.1.1,ip=192.168.1.64/24,bridge=vmbr0"}'
     mounts: '{"mp0":"/mnt/tank/claude,mp=/mnt/tank/claude,backup=0"}'
     description: created with ansible
     features:
@@ -136,7 +136,7 @@
   with_items:
     - "{{ lxc_mnts }}"
 
-- name: Start claude LXC
+- name: Start clawd LXC
   proxmox:
     proxmox_default_behavior: no_defaults
     vmid: 104
