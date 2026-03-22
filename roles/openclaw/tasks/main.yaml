@@ -10,3 +10,10 @@
   shell: curl -fsSL https://openclaw.ai/install.sh | bash -s -- --beta
   args:
     creates: /usr/bin/openclaw
+
+- name: Set OPENCLAW_HOME to persistent storage
+  lineinfile:
+    path: /etc/environment
+    line: OPENCLAW_HOME=/mnt/tank/openclaw
+    regexp: ^OPENCLAW_HOME=
+    state: present
