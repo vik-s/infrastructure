@@ -81,6 +81,14 @@
     - role: docker_alpine
     - role: docker_apps
 
+# Claude session host
+# -------------------
+- hosts: claude
+  vars_files:
+    - 'vars/vault.yaml'
+  roles:
+    - role: docker_alpine
+
 # Ubuntu Dev VM
 # -------------
 - hosts: sakura
