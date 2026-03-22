@@ -86,6 +86,8 @@
 - hosts: clawd
   vars_files:
     - 'vars/vault.yaml'
+  roles:
+    - role: openclaw
 
 # Ubuntu Dev VM
 # -------------
