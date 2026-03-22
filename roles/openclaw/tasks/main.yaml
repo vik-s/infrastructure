@@ -9,4 +9,4 @@
 - name: Install OpenClaw
   shell: curl -fsSL https://openclaw.ai/install.sh | bash -s -- --beta
   args:
-    creates: /usr/local/bin/openclaw
+    creates: /usr/bin/openclaw
