@@ -1,5 +1,11 @@
 ---
 
+- name: Install curl
+  apt:
+    name: curl
+    state: present
+    update_cache: yes
+
 - name: Install OpenClaw
   shell: curl -fsSL https://openclaw.ai/install.sh | bash -s -- --beta
   args:
