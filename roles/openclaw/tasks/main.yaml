@@ -17,3 +17,19 @@
     line: OPENCLAW_HOME=/mnt/tank/openclaw
     regexp: ^OPENCLAW_HOME=
     state: present
+
+- name: Symlink .openclaw config to persistent storage
+  file:
+    src: /mnt/tank/openclaw/.openclaw
+    dest: /home/vik/.openclaw
+    state: link
+    owner: vik
+    group: vik
+    force: yes
+
+- name: Start openclaw gateway on boot
+  cron:
+    name: openclaw-gateway
+    special_time: reboot
+    user: vik
+    job: "OPENCLAW_HOME=/mnt/tank/openclaw /usr/bin/openclaw gateway &"
