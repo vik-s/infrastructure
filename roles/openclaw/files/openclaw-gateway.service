@@ -1,0 +1,14 @@
+[Unit]
+Description=OpenClaw Gateway
+After=network.target
+
+[Service]
+Type=simple
+User=vik
+Environment=OPENCLAW_HOME=/mnt/tank/openclaw
+ExecStart=/usr/bin/openclaw gateway
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

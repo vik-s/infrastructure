@@ -27,9 +27,24 @@
     group: vik
     force: yes
 
-- name: Start openclaw gateway on boot
+- name: Remove old cron-based gateway startup
   cron:
     name: openclaw-gateway
-    special_time: reboot
     user: vik
-    job: "OPENCLAW_HOME=/mnt/tank/openclaw /usr/bin/openclaw gateway &"
+    state: absent
+
+- name: Install openclaw gateway systemd service
+  copy:
+    src: openclaw-gateway.service
+    dest: /etc/systemd/system/openclaw-gateway.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart openclaw gateway
+
+- name: Enable and start openclaw gateway
+  systemd:
+    name: openclaw-gateway
+    enabled: yes
+    state: started
+    daemon_reload: yes

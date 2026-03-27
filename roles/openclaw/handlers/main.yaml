@@ -1,0 +1,7 @@
+---
+
+- name: restart openclaw gateway
+  systemd:
+    name: openclaw-gateway
+    state: restarted
+    daemon_reload: yes
