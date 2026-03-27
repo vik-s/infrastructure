@@ -11,12 +11,6 @@
   args:
     creates: /usr/bin/openclaw
 
-- name: Symlink openclaw as claude for CLI compatibility
-  file:
-    src: /usr/bin/openclaw
-    dest: /usr/bin/claude
-    state: link
-
 - name: Set OPENCLAW_HOME to persistent storage
   lineinfile:
     path: /etc/environment
@@ -33,89 +27,13 @@
     group: vik
     force: yes
 
-- name: Ensure workspace directory exists
-  file:
-    path: /mnt/tank/openclaw/.openclaw/workspace
-    state: directory
-    owner: vik
-    group: vik
-    mode: "0755"
-
-- name: Write claude-max-api-proxy .env file
-  copy:
-    content: "CLAUDE_CODE_OAUTH_TOKEN={{ secret_claude_code_oauth_token }}\n"
-    dest: /mnt/tank/openclaw/.openclaw/workspace/.env
-    owner: vik
-    group: vik
-    mode: "0600"
-  notify: restart claude-max-api-proxy
-
-- name: Install Node.js 20 repo
-  shell: curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-  args:
-    creates: /etc/apt/sources.list.d/nodesource.list
-
-- name: Install Node.js
-  apt:
-    name: nodejs
-    state: present
-    update_cache: yes
-
-- name: Install claude-max-api-proxy
-  npm:
-    name: claude-max-api-proxy
-    global: yes
-    state: present
-
-- name: Install claude-max-api-proxy systemd service
-  copy:
-    src: claude-max-api-proxy.service
-    dest: /etc/systemd/system/claude-max-api-proxy.service
-    owner: root
-    group: root
-    mode: "0644"
-  notify: restart claude-max-api-proxy
-
-- name: Enable and start claude-max-api-proxy
+- name: Stop and disable claude-max-api-proxy
   systemd:
     name: claude-max-api-proxy
-    enabled: yes
-    state: started
+    enabled: no
+    state: stopped
     daemon_reload: yes
-
-- name: Configure openclaw to use claude-max-api-proxy
-  copy:
-    content: |
-      {
-        "env": {
-          "OPENAI_API_KEY": "not-needed",
-          "OPENAI_BASE_URL": "http://localhost:3456/v1"
-        },
-        "agents": {
-          "defaults": {
-            "model": {
-              "primary": "openai/claude-sonnet-4"
-            }
-          }
-        },
-        "commands": {
-          "native": "auto",
-          "nativeSkills": "auto",
-          "restart": true,
-          "ownerDisplay": "raw"
-        },
-        "gateway": {
-          "bind": "loopback",
-          "auth": {
-            "mode": "none"
-          }
-        }
-      }
-    dest: /mnt/tank/openclaw/.openclaw/openclaw.json
-    owner: vik
-    group: vik
-    mode: "0644"
-  notify: restart openclaw gateway
+  ignore_errors: yes
 
 - name: Remove old cron-based gateway startup
   cron:

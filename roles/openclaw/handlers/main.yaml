@@ -5,9 +5,3 @@
     name: openclaw-gateway
     state: restarted
     daemon_reload: yes
-
-- name: restart claude-max-api-proxy
-  systemd:
-    name: claude-max-api-proxy
-    state: restarted
-    daemon_reload: yes

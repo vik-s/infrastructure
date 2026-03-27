@@ -1,7 +1,6 @@
 [Unit]
 Description=OpenClaw Gateway
-After=network.target claude-max-api-proxy.service
-Requires=claude-max-api-proxy.service
+After=network.target
 
 [Service]
 Type=simple
