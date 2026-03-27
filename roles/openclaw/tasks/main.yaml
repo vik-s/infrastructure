@@ -11,6 +11,12 @@
   args:
     creates: /usr/bin/openclaw
 
+- name: Symlink openclaw as claude for CLI compatibility
+  file:
+    src: /usr/bin/openclaw
+    dest: /usr/bin/claude
+    state: link
+
 - name: Set OPENCLAW_HOME to persistent storage
   lineinfile:
     path: /etc/environment
