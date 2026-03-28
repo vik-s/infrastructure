@@ -68,6 +68,13 @@ locations:
     cron: '0 6 * * *'
     options:
       <<: *opts
+  openclaw:
+    <<: *healthchecks
+    from: /mnt/tank/openclaw
+    to: remote-openclaw
+    cron: '0 7 * * *'
+    options:
+      <<: *opts
 
 backends:
   remote-calibre:
@@ -91,3 +98,6 @@ backends:
   remote-zfs-sam:
     <<: *creds
     path: pds-home:zfs-sam
+  remote-openclaw:
+    <<: *creds
+    path: pds-home:openclaw
