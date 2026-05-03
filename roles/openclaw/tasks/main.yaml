@@ -18,6 +18,15 @@
     regexp: ^OPENCLAW_HOME=
     state: present
 
+- name: Export OPENCLAW_HOME for interactive shells
+  copy:
+    dest: /etc/profile.d/openclaw.sh
+    content: |
+      export OPENCLAW_HOME=/mnt/tank/openclaw
+    owner: root
+    group: root
+    mode: "0644"
+
 - name: Symlink .openclaw config to persistent storage
   file:
     src: /mnt/tank/openclaw/.openclaw
