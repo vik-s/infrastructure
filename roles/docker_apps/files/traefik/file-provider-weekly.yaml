@@ -1,0 +1,11 @@
+http:
+  routers:
+    router-weekly:
+      rule: Host(`weekly.iyer.app`)
+      service: service-weekly
+      middlewares: localip@file
+  services:
+    service-weekly:
+      loadBalancer:
+        servers:
+          - url: http://100.102.51.29:3000
