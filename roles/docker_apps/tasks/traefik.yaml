@@ -64,3 +64,10 @@
     dest: /opt/docker/traefik/traefik/conf
     owner: "{{ secret_username }}"
     mode: "{{ docker_file_mask }}"
+
+- name: Install weekly-api file-provider
+  template:
+    src: files/traefik/file-provider-weekly-api.yaml
+    dest: /opt/docker/traefik/traefik/conf
+    owner: "{{ secret_username }}"
+    mode: "{{ docker_file_mask }}"

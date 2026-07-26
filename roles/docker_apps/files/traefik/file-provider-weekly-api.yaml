@@ -1,0 +1,13 @@
+http:
+  routers:
+    router-weekly-api:
+      rule: Host(`weekly.iyer.app`) && PathPrefix(`/api`)
+      service: service-weekly-api
+      middlewares:
+        - localip@file
+        - strip-api-prefix@file
+  services:
+    service-weekly-api:
+      loadBalancer:
+        servers:
+          - url: http://192.168.1.100:3001
