@@ -1,0 +1,6 @@
+---
+syncoid_source_host: ansible@192.168.1.210
+syncoid_ssh_key: /home/ansible/.ssh/server_privkey
+# Fresh namespace preserves the divergent legacy tank/* copies for recovery.
+syncoid_target_root: tank/gaara
+syncoid_max_age_hours: 36

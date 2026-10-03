@@ -14,12 +14,5 @@
     group: root
     mode: 0775
 
-- name: Install docker-compose for apps on PVE host
-  ansible.builtin.template:
-    src: files/docker-compose.yaml
-    dest: /opt/docker/docker-compose.yaml
-    owner: root
-    group: root
-    mode: 0775
-    validate: docker-compose -f %s config
-  notify: restart docker
+# The scrutiny_collector role owns the collector configuration and container.
+# Do not recreate the obsolete collector from /opt/docker/docker-compose.yaml.

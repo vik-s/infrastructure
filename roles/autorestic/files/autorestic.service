@@ -1,12 +1,15 @@
 [Unit]
 Description=Autorestic cron
+Wants=network-online.target
+After=network-online.target
 
 [Service]
 User=root
 Group=root
-Environment=TZ=Los_Angeles
+Environment=TZ={{ autorestic_timezone }}
+Environment=HOME=/root
 Type=oneshot
+TimeoutStartSec=infinity
 ExecStart=/etc/autorestic/autorestic
-
-[Install]
-WantedBy=timers.target
+# Autorestic can hide individual cron failures. Verify actual snapshots.
+ExecStartPost=/usr/local/lib/autorestic/autorestic-health.py check

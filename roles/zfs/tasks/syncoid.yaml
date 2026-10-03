@@ -28,21 +28,57 @@
     owner: "root"
     group: "root"
 
-- name: Install systemd services
-  copy:
-    src: files/{{ item }} 
-    dest: /lib/systemd/system/{{ item }}
-  loop: "{{ syncoid_services }}"
+- name: Create protected replication configuration directory
+  ansible.builtin.file:
+    path: /etc/syncoid
+    state: directory
+    owner: root
+    group: root
+    mode: '0700'
 
-- name: Enable systemd services
-  systemd:
+- name: Configure the verified replication runner
+  ansible.builtin.template:
+    src: files/syncoid-config.json.j2
+    dest: /etc/syncoid/config.json
+    owner: root
+    group: root
+    mode: '0600'
+  no_log: true
+
+- name: Install snapshot verification and replication runner
+  ansible.builtin.copy:
+    src: files/replicate.py
+    dest: /opt/syncoid/replicate.py
+    mode: '0755'
+    owner: root
+    group: root
+
+- name: Create an unmounted read-only destination without touching legacy replicas
+  community.general.zfs:
+    name: "{{ syncoid_target_root }}"
+    state: present
+    extra_zfs_properties:
+      readonly: 'on'
+      mountpoint: none
+      canmount: 'off'
+
+- name: Install replication and health units
+  ansible.builtin.copy:
+    src: "files/{{ item }}"
+    dest: "/etc/systemd/system/{{ item }}"
+    mode: '0644'
+  loop:
+    - syncoid.service
+    - syncoid.timer
+    - syncoid-health.service
+    - syncoid-health.timer
+
+- name: Enable only the timers and preserve any running transfer
+  ansible.builtin.systemd:
     name: "{{ item }}"
+    daemon_reload: true
     enabled: true
-    masked: false
-  loop: "{{ syncoid_services }}"
-
-    #- name: Start syncoid services
-    #systemd:
-    #name: "{{ item }}" 
-    #state: started
-    #loop: "{{ syncoid_services }}"
+    state: started
+  loop:
+    - syncoid.timer
+    - syncoid-health.timer

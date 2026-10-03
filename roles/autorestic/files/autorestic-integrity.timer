@@ -1,0 +1,10 @@
+[Unit]
+Description=Run due weekly Backblaze integrity checks; retry deferred checks daily
+
+[Timer]
+OnCalendar=*-*-* 12:00:00 UTC
+Persistent=true
+RandomizedDelaySec=30min
+
+[Install]
+WantedBy=timers.target

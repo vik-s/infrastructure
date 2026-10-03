@@ -1,0 +1,7 @@
+---
+- name: Maintain disk-health collectors without reprovisioning hosts
+  hosts: gaara:tsukuyomi
+  become: true
+  roles:
+    - role: scrutiny_collector
+      collector_config: "{{ 'gaara_config' if inventory_hostname in groups['gaara'] else 'tsukuyomi_config' }}"

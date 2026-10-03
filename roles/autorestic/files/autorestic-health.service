@@ -1,0 +1,12 @@
+[Unit]
+Description=Verify Backblaze snapshot freshness for every dataset
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+Environment=HOME=/root
+UMask=0077
+ExecStart=/usr/bin/flock -n /run/lock/autorestic-health.lock /usr/local/lib/autorestic/autorestic-health.py check
+TimeoutStartSec=40min

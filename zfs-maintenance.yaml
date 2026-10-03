@@ -1,0 +1,23 @@
+---
+- name: Maintain replication without upgrading or reprovisioning hosts
+  hosts: tsukuyomi
+  become: true
+  vars_files:
+    - vars/vault.yaml
+    - roles/zfs/vars/main.yaml
+    - roles/zfs/defaults/main.yaml
+  vars:
+    backup_server: true
+  tasks:
+    - name: Install verified replication only
+      ansible.builtin.include_role:
+        name: zfs
+        tasks_from: syncoid.yaml
+    - name: Preserve legacy snapshots and retain snapshots in the new replica namespace
+      ansible.builtin.template:
+        src: roles/zfs/files/sanoid.conf
+        dest: /etc/sanoid/sanoid.conf
+        owner: root
+        group: root
+        mode: '0644'
+        backup: true

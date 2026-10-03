@@ -1,63 +1,133 @@
 ---
-- name: Install bzip2
+- name: Install backup runtime dependencies
   ansible.builtin.package:
-    name: 
-      - bzip2
-      - restic
+    name: [bzip2, python3-yaml, util-linux]
+    state: present
 
-- name: Create autorestic configuration directory
-  file:
-    path: /etc/autorestic
-    state: directory
-    owner: "{{ secret_username }}"
-    mode: "{{ docker_dir_mask }}"
-      
-- name: Install autorestic config file
-  template: 
-    src: files/.autorestic.yaml
-    dest: /etc/autorestic
-    owner: "{{ secret_username }}"
-    mode: "{{ docker_dir_mask }}"
-
-- name: Download autorestic binary
-  ansible.builtin.get_url:
-    url: "https://github.com/cupcakearmy/autorestic/releases/download/v1.7.4/autorestic_1.7.4_linux_amd64.bz2"
-    dest: /etc/autorestic/autorestic.bz2
-    mode: '0644'
-  when: enable_download == true
-
-- name: Unarchive autorestic binary and move it to /usr/local/bin
-  ansible.builtin.shell:
-    chdir: /etc/autorestic
-    cmd: bzip2 -d autorestic.bz2 && mv autorestic /usr/local/bin
-  when: enable_download == true
-
-- name: Set autorestic executable permissions
+- name: Create protected backup directories
   ansible.builtin.file:
-    path: /usr/local/bin/autorestic
-    owner: "{{ secret_username }}"
-    group: "{{ secret_username }}"
-    mode: '0754'
-  when: enable_download == true
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0700'
+  loop:
+    - /etc/autorestic
+    - /var/lib/autorestic-health
 
-- name: Install autorestic script to run on cron
+- name: Create directory for versioned backup tools
+  ansible.builtin.file:
+    path: /usr/local/lib/autorestic
+    state: directory
+    mode: '0755'
+
+- name: Download checksum-verified backup tools
+  ansible.builtin.get_url:
+    url: "{{ item.url }}"
+    dest: "/usr/local/lib/autorestic/{{ item.name }}.bz2"
+    checksum: "sha256:{{ item.checksum }}"
+    mode: '0644'
+  loop:
+    - name: "autorestic-{{ autorestic_version }}"
+      url: "https://github.com/cupcakearmy/autorestic/releases/download/v{{ autorestic_version }}/autorestic_{{ autorestic_version }}_linux_amd64.bz2"
+      checksum: "{{ autorestic_sha256 }}"
+    - name: "restic-{{ autorestic_restic_version }}"
+      url: "https://github.com/restic/restic/releases/download/v{{ autorestic_restic_version }}/restic_{{ autorestic_restic_version }}_linux_amd64.bz2"
+      checksum: "{{ autorestic_restic_sha256 }}"
+
+- name: Unpack versioned tools without replacing running executables
+  ansible.builtin.shell: >-
+    bzip2 -dc /usr/local/lib/autorestic/{{ item }}.bz2 > /usr/local/lib/autorestic/{{ item }}.tmp
+    && chmod 0755 /usr/local/lib/autorestic/{{ item }}.tmp
+    && mv /usr/local/lib/autorestic/{{ item }}.tmp /usr/local/lib/autorestic/{{ item }}
+  args:
+    creates: "/usr/local/lib/autorestic/{{ item }}"
+  loop:
+    - "autorestic-{{ autorestic_version }}"
+    - "restic-{{ autorestic_restic_version }}"
+
+- name: Make versioned tools executable
+  ansible.builtin.file:
+    path: "/usr/local/lib/autorestic/{{ item }}"
+    mode: '0755'
+    owner: root
+    group: root
+  loop:
+    - "autorestic-{{ autorestic_version }}"
+    - "restic-{{ autorestic_restic_version }}"
+
+- name: Install protected Autorestic configuration
+  ansible.builtin.template:
+    src: files/.autorestic.yaml
+    dest: /etc/autorestic/.autorestic.yaml
+    owner: root
+    group: root
+    mode: '0600'
+    backup: true
+  no_log: true
+
+- name: Inspect deployed monitoring settings
+  ansible.builtin.stat:
+    path: /etc/autorestic/monitoring.yaml
+  register: autorestic_monitoring_stat
+
+- name: Read deployed monitoring settings to preserve push tokens
+  ansible.builtin.slurp:
+    src: /etc/autorestic/monitoring.yaml
+  register: autorestic_monitoring_existing
+  when: autorestic_monitoring_stat.stat.exists
+  no_log: true
+
+- name: Configure monitoring without dropping deployed per-dataset tokens
+  ansible.builtin.copy:
+    content: "{{ autorestic_monitoring_settings | to_nice_yaml }}"
+    dest: /etc/autorestic/monitoring.yaml
+    owner: root
+    group: root
+    mode: '0600'
+  vars:
+    autorestic_existing_settings: "{{ (autorestic_monitoring_existing.content | b64decode | from_yaml) if autorestic_monitoring_stat.stat.exists else {} }}"
+    autorestic_monitoring_settings:
+      aggregate_push_url: "{{ hcid_autorestic }}"
+      location_push_urls: "{{ autorestic_location_push_urls | default(autorestic_existing_settings.location_push_urls | default({})) }}"
+      max_age_hours: "{{ autorestic_max_age_hours | int }}"
+      restic_binary: "/usr/local/lib/autorestic/restic-{{ autorestic_restic_version }}"
+      integrity_read_data_subset: "{{ autorestic_integrity_subset }}"
+  no_log: true
+
+- name: Install lock recovery and independent health verification
+  ansible.builtin.copy:
+    src: "files/{{ item }}"
+    dest: "/usr/local/lib/autorestic/{{ item }}"
+    mode: '0755'
+    owner: root
+    group: root
+  loop: [autorestic-guard.py, autorestic-health.py]
+
+- name: Install guarded backup runner
   ansible.builtin.template:
     src: files/autorestic.sh
-    dest: "/etc/autorestic/autorestic"
-    mode: "0755"
-    owner: "root"
-    group: "root"
+    dest: /etc/autorestic/autorestic
+    mode: '0755'
 
-- name: Install autorestic systemd services
-  ansible.builtin.copy:
-    src: files/{{ item }}
-    dest: /lib/systemd/system/{{ item }}
-  loop: "{{ autorestic_services }}"
+- name: Install systemd backup units
+  ansible.builtin.template:
+    src: "files/{{ item }}"
+    dest: "/etc/systemd/system/{{ item }}"
+    mode: '0644'
+  loop:
+    - autorestic.service
+    - autorestic.timer
+    - autorestic-health.service
+    - autorestic-health.timer
+    - autorestic-integrity.service
+    - autorestic-integrity.timer
 
-- name: Enable autorestic systemd services
-  systemd:
+- name: Start backup timers without restarting running backup services
+  ansible.builtin.systemd:
     name: "{{ item }}"
     enabled: true
-    masked: false
-    daemon-reload: true
-  loop: "{{ autorestic_services }}"
+    state: started
+    daemon_reload: true
+    no_block: true
+  loop: [autorestic.timer, autorestic-health.timer, autorestic-integrity.timer]

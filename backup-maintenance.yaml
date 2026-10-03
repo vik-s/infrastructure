@@ -1,0 +1,8 @@
+---
+- name: Maintain Backblaze backup tooling without provisioning the host
+  hosts: gaara
+  become: true
+  vars_files:
+    - vars/vault.yaml
+  roles:
+    - autorestic

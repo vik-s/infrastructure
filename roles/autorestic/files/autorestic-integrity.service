@@ -1,0 +1,14 @@
+[Unit]
+Description=Check Backblaze repository structure and a sample of stored data
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+Environment=HOME=/root
+UMask=0077
+TimeoutStartSec=infinity
+Nice=10
+IOSchedulingClass=idle
+ExecStart=/usr/bin/flock -n -E 75 /run/lock/autorestic-operation.lock /bin/sh -ec '/usr/local/lib/autorestic/autorestic-guard.py; exec /usr/local/lib/autorestic/autorestic-health.py integrity'
