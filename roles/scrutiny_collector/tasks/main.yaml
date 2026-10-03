@@ -46,6 +46,7 @@
 - name: Inspect existing collector ownership
   ansible.builtin.command: docker inspect scrutiny-collector
   register: scrutiny_inspect
+  check_mode: false
   changed_when: false
   failed_when: scrutiny_inspect.rc not in [0, 1]
 
