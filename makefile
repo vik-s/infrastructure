@@ -9,6 +9,15 @@ gitupdate:
 gaara:
 	ansible-playbook -u ansible -b run.yaml --limit gaara --vault-password-file .vault-pass
 
+backup-maintenance:
+	ansible-playbook -u ansible -b backup-maintenance.yaml --vault-password-file .vault-pass
+
+scrutiny-maintenance:
+	ansible-playbook -u ansible -b scrutiny-maintenance.yaml
+
+zfs-maintenance:
+	ansible-playbook -u ansible -b zfs-maintenance.yaml --vault-password-file .vault-pass
+
 tsukuyomi:
 	ansible-playbook -u ansible -b run.yaml --limit tsukuyomi --vault-password-file .vault-pass
 

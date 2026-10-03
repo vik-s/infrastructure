@@ -1,0 +1,11 @@
+[Unit]
+Description=Verify replicated ZFS snapshot GUIDs and freshness
+Wants=network-online.target
+After=zfs.target network-online.target
+
+[Service]
+Type=oneshot
+User=root
+Environment=HOME=/root
+ExecStart=/usr/bin/flock -n /run/lock/syncoid-health.lock /usr/bin/python3 /opt/syncoid/replicate.py check
+TimeoutStartSec=10min

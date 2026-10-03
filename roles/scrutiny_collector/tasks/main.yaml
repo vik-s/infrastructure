@@ -1,22 +1,91 @@
-- name: Create /opt/docker/scrutiny-collector if it does not exist
+---
+- name: Create collector directory
   ansible.builtin.file:
     path: /opt/docker/scrutiny-collector
     state: directory
-    mode: 0775
+    owner: root
+    group: root
+    mode: '0755'
 
-- name: Install scrutiny collector docker compose file
-  template:
+- name: Verify configured physical disks exist
+  ansible.builtin.stat:
+    path: "{{ item.split(':')[0] }}"
+    follow: true
+  loop: "{{ scrutiny_collector_devices[collector_config] }}"
+  register: scrutiny_disk_stats
+
+- name: Refuse incomplete disk mappings
+  ansible.builtin.assert:
+    that: item.stat.exists and item.stat.isblk
+    fail_msg: "Collector disk is missing: {{ item.item }}"
+  loop: "{{ scrutiny_disk_stats.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+
+- name: Install collector configuration before creating its bind mount
+  ansible.builtin.copy:
+    src: "files/{{ collector_config }}/collector.yaml"
+    dest: /opt/docker/scrutiny-collector/collector.yaml
+    owner: root
+    group: root
+    mode: '0644'
+    backup: true
+  register: scrutiny_config_copy
+
+- name: Install the sole collector compose definition
+  ansible.builtin.template:
     src: files/docker-compose.yaml
     dest: /opt/docker/scrutiny-collector/docker-compose.yaml
-    mode: "{{ docker_file_mask }}"
-    owner: "{{ secret_username }}"
+    mode: '0644'
+    owner: root
+    group: root
+    backup: true
     validate: docker-compose -f %s config
+  register: scrutiny_compose_copy
 
-- name: Copy the collector configuration file
-  ansible.builtin.copy:
-    src: files/{{ collector_config }}
-    dest: /opt/docker/scrutiny-collector
-    mode: 0775
-    owner: "{{ secret_username }}"
-    group: "{{ secret_username }}"
+- name: Inspect existing collector ownership
+  ansible.builtin.command: docker inspect scrutiny-collector
+  register: scrutiny_inspect
+  changed_when: false
+  failed_when: scrutiny_inspect.rc not in [0, 1]
 
+- name: Preserve the obsolete collector before adopting the dedicated role
+  when:
+    - scrutiny_inspect.rc == 0
+    - (scrutiny_inspect.stdout | from_json)[0].Config.Labels.get('com.docker.compose.service', '') == 'scrutiny-collector-old'
+  block:
+    - name: Prevent the obsolete collector from restarting
+      ansible.builtin.command: docker update --restart=no scrutiny-collector
+    - name: Stop only the obsolete disk collector
+      ansible.builtin.command: docker stop scrutiny-collector
+    - name: Retain the obsolete container for rollback
+      ansible.builtin.command: "docker rename scrutiny-collector scrutiny-collector-legacy-{{ ansible_date_time.epoch }}"
+
+- name: Inspect obsolete root compose definition
+  ansible.builtin.stat:
+    path: /opt/docker/docker-compose.yaml
+  register: scrutiny_legacy_compose
+
+- name: Archive the obsolete compose definition only when it owns no other services
+  when: scrutiny_legacy_compose.stat.exists
+  block:
+    - name: Read obsolete compose definition
+      ansible.builtin.slurp:
+        src: /opt/docker/docker-compose.yaml
+      register: scrutiny_legacy_content
+    - name: Preserve the legacy single-service definition outside the active compose path
+      ansible.builtin.command:
+        argv:
+          - mv
+          - /opt/docker/docker-compose.yaml
+          - "/opt/docker/scrutiny-collector/legacy-docker-compose-{{ ansible_date_time.epoch }}.yaml"
+      when: ((scrutiny_legacy_content.content | b64decode | from_yaml).services.keys() | list) == ['scrutiny-collector-old']
+
+- name: Start the collector with its actual configuration and device map
+  ansible.builtin.command:
+    argv: >-
+      {{ ['docker-compose', '-f', '/opt/docker/scrutiny-collector/docker-compose.yaml', 'up', '-d']
+         + (['--force-recreate'] if scrutiny_config_copy.changed else [])
+         + ['scrutiny-collector'] }}
+  register: scrutiny_up
+  changed_when: "'Started' in scrutiny_up.stderr or 'Recreated' in scrutiny_up.stderr or 'Created' in scrutiny_up.stderr"

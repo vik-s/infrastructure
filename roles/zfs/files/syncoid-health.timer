@@ -1,0 +1,10 @@
+[Unit]
+Description=Check ZFS replication freshness every 30 minutes
+
+[Timer]
+OnCalendar=*-*-* *:00,30:00 UTC
+Persistent=true
+Unit=syncoid-health.service
+
+[Install]
+WantedBy=timers.target

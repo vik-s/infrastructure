@@ -11,7 +11,7 @@ api:
 devices:
   - device: /dev/sda
     type: 'auto'
-  - device: /dev/sdc
+  - device: /dev/sdb
     type: 'auto'
-  - device: /dev/sde
+  - device: /dev/sdc
     type: 'auto'

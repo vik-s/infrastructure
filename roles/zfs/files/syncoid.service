@@ -1,12 +1,15 @@
 [Unit]
-Description=Syncoid pull
-Requires=zfs.target network-online.target
+Description=Verified Gaara to Tsukuyomi ZFS replication
+Requires=zfs.target
+Wants=network-online.target
 After=zfs.target network-online.target
 
 [Service]
-Environment=TZ=UTC
 Type=oneshot
+User=root
+Environment=HOME=/root
+Environment=TZ=UTC
 ExecStart=/opt/syncoid/syncoid
-
-[Install]
-WantedBy=timers.target
+TimeoutStartSec=infinity
+Nice=10
+IOSchedulingClass=idle

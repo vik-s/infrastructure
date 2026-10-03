@@ -1,0 +1,15 @@
+---
+# Preserve the installed collector build during this configuration repair.
+scrutiny_collector_image: ghcr.io/analogj/scrutiny@sha256:9bdf8ebf6a502cd7f6b0101df2b145e24274c17e1b4f3f328da64d78000e09bb
+scrutiny_collector_devices:
+  gaara_config:
+    - /dev/disk/by-id/wwn-0x5002538d40e37de0:/dev/sda
+    - /dev/disk/by-id/wwn-0x5002538d420e5487:/dev/sdb
+    - /dev/disk/by-id/wwn-0x5000cca2adc1aa43:/dev/sdc
+    - /dev/disk/by-id/wwn-0x5000cca2adc10bf6:/dev/sdd
+    - /dev/disk/by-id/wwn-0x5000cca0bbf3802a:/dev/sde
+    - /dev/disk/by-id/wwn-0x5000cca000c60000:/dev/sdf
+  tsukuyomi_config:
+    - /dev/disk/by-id/wwn-0x5000cca263c0e094:/dev/sda
+    - /dev/disk/by-id/wwn-0x5000cca263c219dc:/dev/sdb
+    - /dev/disk/by-id/wwn-0x5002538d40e12522:/dev/sdc

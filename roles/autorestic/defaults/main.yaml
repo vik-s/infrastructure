@@ -1,0 +1,11 @@
+---
+autorestic_version: '1.8.3'
+autorestic_sha256: 2bce52253dc78bb94ad3fe848868a8a3bf52ca3543a8f89019a9d49b271ecf46
+autorestic_restic_version: '0.19.1'
+autorestic_restic_sha256: f415415624dcc452f2a02b8c33641791a8c6d6d3b65bbb3543fcf9a25151585c
+autorestic_max_age_hours: 36
+# Preserve the historical UTC schedule; TZ=Los_Angeles was invalid.
+autorestic_timezone: UTC
+autorestic_integrity_subset: 64M
+# Set autorestic_location_push_urls in encrypted variables. If omitted,
+# preserve the already-deployed per-dataset push URLs.

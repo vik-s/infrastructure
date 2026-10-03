@@ -16,7 +16,9 @@ extras:
   healthchecks: &healthchecks
     hooks:
       success:
-        - '/usr/bin/curl -m 10 --retry 3 "{{ hcid_autorestic }}"'
+        - '/usr/local/lib/autorestic/autorestic-health.py success'
+      failure:
+        - '/usr/local/lib/autorestic/autorestic-health.py failure'
 
 locations:
   calibre:
